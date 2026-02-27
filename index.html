@@ -1,1119 +1,1112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0a0a14" />
-  <meta name="description" content="Math Saga – The ultimate arithmetic adventure game for kids" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <title>Math Saga 🌟</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    /* ─── TOKENS ──────────────────────────────── */
-    :root {
-      --bg:       #0a0a14;
-      --surface:  #12121f;
-      --card:     #1a1a2e;
-      --border:   #2a2a4a;
-      --glow:     #00f5ff;
-      --accent:   #ff3cac;
-      --gold:     #ffd700;
-      --green:    #39ff14;
-      --red:      #ff2d55;
-      --text:     #e8e8ff;
-      --muted:    #6060a0;
-      --font-hd:  'Orbitron', monospace;
-      --font-ui:  'Rajdhani', sans-serif;
-      --r:        16px;
-      --r-lg:     24px;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#0d0d1a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Math Saga ∞</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=Syne+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#070710; --deep:#0d0d1a; --surface:#141428;
+  --card:#1c1c35; --raised:#232342;
+  --border:rgba(255,255,255,0.07); --border-md:rgba(255,255,255,0.14);
+  --cyan:#00e5ff; --violet:#7c3aff; --magenta:#ff2d78;
+  --gold:#ffb800; --lime:#00ff87; --coral:#ff5c4d;
+  --correct:#00ff87; --wrong:#ff3b5c;
+  --text:#f0f0ff; --text-mid:#a0a0c0; --text-dim:#505075;
+  --fd:'Syne',sans-serif; --fm:'Syne Mono',monospace; --fb:'Space Grotesk',sans-serif;
+  --r:16px; --rlg:24px; --rxl:32px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;width:100%;background:var(--ink);color:var(--text);
+  font-family:var(--fb);overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
 
-    /* ─── RESET ──────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%; width: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-ui);
-      font-size: 16px;
-      overflow: hidden;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 130% 80% at 15% -5%,rgba(124,58,255,.13) 0%,transparent 55%),
+             radial-gradient(ellipse 80% 60% at 85% 105%,rgba(0,229,255,.08) 0%,transparent 55%)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);
+  background-size:60px 60px}
 
-    /* ─── GRID BACKGROUND ──────────────────── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background:
-        linear-gradient(rgba(0,245,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,245,255,.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
-    body::after {
-      content: '';
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,245,255,.06) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
+/* SCREENS — only .active is shown */
+.screen{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;z-index:10}
+.screen.active{display:flex}
+#home,#result{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;justify-content:flex-start}
+#home::-webkit-scrollbar,#result::-webkit-scrollbar{display:none}
 
-    /* ─── SCREENS ──────────────────────────── */
-    .screen {
-      position: fixed; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 24px;
-      z-index: 10;
-      transition: opacity .35s ease, transform .35s ease;
-    }
-    .screen.hidden { opacity: 0; pointer-events: none; transform: scale(.96); }
+/* HOME */
+.home-inner{width:100%;max-width:440px;padding:0 20px 48px;display:flex;flex-direction:column;align-items:center;min-height:100%}
+.hero{width:100%;padding:52px 0 28px;display:flex;flex-direction:column;align-items:center;position:relative}
+.hero-glow{position:absolute;width:300px;height:300px;border-radius:50%;top:-60px;left:50%;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(circle,rgba(124,58,255,.16) 0%,transparent 70%)}
+.logo-mark{width:80px;height:80px;border-radius:22px;
+  background:linear-gradient(135deg,var(--violet),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;margin-bottom:18px;position:relative;z-index:1;
+  box-shadow:0 0 40px rgba(124,58,255,.4),0 20px 40px rgba(0,0,0,.35);
+  animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.logo-title{font-family:var(--fd);font-size:clamp(38px,11vw,56px);font-weight:800;
+  letter-spacing:-1px;line-height:1;position:relative;z-index:1;
+  background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,var(--violet) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-tag{font-size:11px;letter-spacing:5px;color:var(--text-dim);text-transform:uppercase;
+  margin-top:6px;font-weight:500;position:relative;z-index:1}
 
-    /* ─── HOME ──────────────────────────────── */
-    #home { gap: 0; }
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-bottom:24px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 8px 12px;text-align:center}
+.sc-val{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--gold);line-height:1}
+.sc-lbl{font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-top:4px;font-weight:500}
 
-    .logo-wrap {
-      display: flex; flex-direction: column; align-items: center;
-      margin-bottom: 12px;
-    }
-    .logo-icon {
-      font-size: 72px; line-height: 1;
-      filter: drop-shadow(0 0 24px var(--glow));
-      animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(-10px); }
-    }
-    .logo-title {
-      font-family: var(--font-hd);
-      font-size: clamp(36px, 10vw, 56px);
-      font-weight: 900;
-      letter-spacing: 4px;
-      background: linear-gradient(135deg, var(--glow) 0%, var(--accent) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 20px rgba(0,245,255,.5));
-    }
-    .logo-sub {
-      font-size: 13px; letter-spacing: 6px;
-      color: var(--muted); text-transform: uppercase;
-      margin-top: 4px;
-    }
+.sect{width:100%;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sect-line{flex:1;height:1px;background:var(--border)}
+.sect-lbl{font-size:10px;letter-spacing:4px;color:var(--text-dim);text-transform:uppercase;font-weight:600;white-space:nowrap}
 
-    /* Stats bar on home */
-    .home-stats {
-      display: flex; gap: 20px;
-      margin: 20px 0 28px;
-    }
-    .hstat {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 12px 20px;
-      text-align: center;
-      min-width: 90px;
-    }
-    .hstat-val {
-      font-family: var(--font-hd);
-      font-size: 22px; font-weight: 700;
-      color: var(--gold);
-    }
-    .hstat-lbl { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+.daily{width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(255,184,0,.07),rgba(255,45,120,.07));
+  border:1.5px solid rgba(255,184,0,.2);margin-bottom:24px;cursor:pointer;transition:transform .15s}
+.daily:active{transform:scale(.98)}
+.daily-icon{font-size:30px;flex-shrink:0}
+.daily-title{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--gold)}
+.daily-sub{font-size:12px;color:var(--text-mid);margin-top:2px}
+.daily-arr{margin-left:auto;font-size:18px;color:var(--gold);flex-shrink:0}
 
-    /* Level grid */
-    .section-label {
-      font-size: 11px; letter-spacing: 4px; color: var(--muted);
-      text-transform: uppercase; margin-bottom: 14px; align-self: flex-start;
-      width: 100%; max-width: 380px;
-    }
-    .level-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      width: 100%; max-width: 380px;
-      margin-bottom: 24px;
-    }
-    .lvl-btn {
-      aspect-ratio: 1;
-      border-radius: var(--r);
-      border: 1.5px solid var(--border);
-      background: var(--card);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      font-family: var(--font-hd);
-      font-size: 20px; font-weight: 700;
-      color: var(--text);
-      transition: all .2s;
-      position: relative;
-      overflow: hidden;
-    }
-    .lvl-btn::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, var(--glow), var(--accent));
-      opacity: 0;
-      transition: opacity .2s;
-    }
-    .lvl-btn:active::before, .lvl-btn.active-lvl::before { opacity: 1; }
-    .lvl-btn:active { transform: scale(.94); }
-    .lvl-btn .lvl-num { position: relative; z-index: 1; }
-    .lvl-btn .lvl-stars { font-size: 9px; position: relative; z-index: 1; color: var(--gold); margin-top: 2px; letter-spacing: 1px; }
-    .lvl-btn.locked { opacity: .35; }
-    .lvl-btn.locked::after { content: '🔒'; position: absolute; font-size: 16px; }
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:24px}
+.mc{border-radius:var(--r);border:1.5px solid var(--border);background:var(--card);
+  padding:16px 14px;display:flex;flex-direction:column;align-items:flex-start;
+  transition:all .18s;position:relative;overflow:hidden;cursor:pointer}
+.mc::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--mc1,var(--violet)),var(--mc2,var(--cyan)));
+  opacity:0;transition:opacity .18s}
+.mc.sel{border-color:var(--mc1,var(--violet))}
+.mc.sel::before{opacity:.09}
+.mc:active{transform:scale(.95)}
+.mc-icon{font-size:24px;margin-bottom:8px;position:relative;z-index:1}
+.mc-name{font-family:var(--fd);font-size:14px;font-weight:700;position:relative;z-index:1;margin-bottom:2px}
+.mc-desc{font-size:11px;color:var(--text-mid);position:relative;z-index:1;line-height:1.4}
+.mc-badge{position:absolute;top:10px;right:10px;font-size:9px;padding:2px 7px;
+  border-radius:20px;font-weight:700;letter-spacing:1px;z-index:1}
 
-    /* Op toggles */
-    .ops-row {
-      display: flex; gap: 10px;
-      margin-bottom: 28px;
-      width: 100%; max-width: 380px;
-    }
-    .op-btn {
-      flex: 1;
-      padding: 10px 4px;
-      border-radius: var(--r);
-      border: 1.5px solid var(--border);
-      background: var(--card);
-      font-size: 20px;
-      color: var(--muted);
-      transition: all .2s;
-      font-weight: 700;
-    }
-    .op-btn.on {
-      border-color: var(--glow);
-      background: rgba(0,245,255,.1);
-      color: var(--glow);
-      box-shadow: 0 0 12px rgba(0,245,255,.3);
-    }
-    .op-btn:active { transform: scale(.92); }
+.diff-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;margin-bottom:24px}
+.db{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--border);background:var(--card);
+  font-family:var(--fd);font-size:16px;font-weight:700;color:var(--text-mid);
+  transition:all .15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.db .dbar{width:55%;height:3px;border-radius:2px;background:var(--border);transition:background .15s}
+.db.sel{border-color:var(--cyan);background:rgba(0,229,255,.08);color:var(--cyan);box-shadow:0 0 14px rgba(0,229,255,.2)}
+.db.sel .dbar{background:var(--cyan)}
+.db:active{transform:scale(.9)}
 
-    /* Play button */
-    .play-btn {
-      width: 100%; max-width: 380px;
-      padding: 18px;
-      border-radius: var(--r-lg);
-      font-family: var(--font-hd);
-      font-size: 18px; font-weight: 700;
-      letter-spacing: 4px;
-      background: linear-gradient(135deg, var(--glow), var(--accent));
-      color: #000;
-      box-shadow: 0 0 30px rgba(0,245,255,.4), 0 0 60px rgba(255,60,172,.2);
-      transition: all .2s;
-      position: relative;
-      overflow: hidden;
-    }
-    .play-btn::after {
-      content: '';
-      position: absolute; inset: 0;
-      background: white;
-      opacity: 0;
-      transition: opacity .15s;
-    }
-    .play-btn:active::after { opacity: .15; }
-    .play-btn:active { transform: scale(.97); }
+.ops-row{display:flex;gap:8px;width:100%;margin-bottom:28px}
+.ot{flex:1;padding:12px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);
+  font-size:17px;font-weight:700;color:var(--text-dim);transition:all .15s;text-align:center}
+.ot.on{border-color:var(--violet);background:rgba(124,58,255,.1);color:var(--text);box-shadow:0 0 12px rgba(124,58,255,.2)}
+.ot:active{transform:scale(.9)}
 
-    /* ─── GAME SCREEN ──────────────────────── */
-    #game { justify-content: flex-start; padding-top: 0; }
+.cta{width:100%;padding:20px;border-radius:var(--rxl);font-family:var(--fd);font-size:17px;font-weight:800;
+  letter-spacing:2px;background:linear-gradient(135deg,var(--violet),var(--cyan));color:#fff;
+  box-shadow:0 0 40px rgba(124,58,255,.35),0 16px 40px rgba(0,0,0,.3);
+  transition:transform .15s,box-shadow .15s;margin-bottom:24px;position:relative;overflow:hidden}
+.cta::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.15);opacity:0;transition:opacity .12s}
+.cta:active{transform:scale(.97)}.cta:active::after{opacity:1}
 
-    .game-header {
-      width: 100%; max-width: 480px;
-      display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px 0;
-      margin-bottom: 12px;
-    }
-    .quit-btn {
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      border: 1.5px solid var(--border);
-      background: var(--card);
-      color: var(--muted);
-      font-size: 18px;
-      display: flex; align-items: center; justify-content: center;
-      transition: all .2s;
-    }
-    .quit-btn:active { transform: scale(.9); color: var(--red); }
+.lb-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;margin-bottom:8px}
+.lb-hd{font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px;font-weight:600}
+.lb-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:var(--fm);font-size:14px;color:var(--text-dim);width:24px;text-align:center}
+.lb-rank.g{color:var(--gold)}
+.lb-name{flex:1;font-size:14px;font-weight:600}
+.lb-score{font-family:var(--fm);font-size:14px;color:var(--cyan);font-weight:700}
 
-    .game-info {
-      display: flex; gap: 12px;
-      align-items: center;
-    }
-    .info-pill {
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      font-size: 13px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .info-pill b {
-      font-family: var(--font-hd);
-      font-size: 14px;
-      color: var(--glow);
-    }
-    .streak-pill b { color: var(--gold); }
+/* GAME */
+#game{justify-content:flex-start}
+.gh{width:100%;max-width:480px;padding:max(env(safe-area-inset-top,0px),16px) 20px 0;
+  display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.gquit{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--card);
+  font-size:16px;color:var(--text-mid);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.gquit:active{color:var(--wrong);border-color:var(--wrong)}
+.gpills{display:flex;gap:6px;flex:1;justify-content:flex-end;flex-wrap:wrap}
+.gp{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;
+  border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600}
+.gpv{font-family:var(--fm);color:var(--cyan);font-size:13px;font-weight:700}
+.gp.sp .gpv{color:var(--gold)}
 
-    /* Timer arc */
-    .timer-wrap {
-      width: 100%; max-width: 480px;
-      padding: 0 20px;
-      margin-bottom: 8px;
-    }
-    .timer-bar-bg {
-      height: 6px;
-      border-radius: 3px;
-      background: var(--border);
-      overflow: hidden;
-      position: relative;
-    }
-    .timer-bar {
-      height: 100%;
-      border-radius: 3px;
-      background: linear-gradient(90deg, var(--glow), var(--accent));
-      transition: width .1s linear, background .3s;
-      box-shadow: 0 0 8px var(--glow);
-    }
-    .timer-bar.urgent { background: linear-gradient(90deg, var(--red), var(--accent)); box-shadow: 0 0 8px var(--red); }
-    .timer-label {
-      display: flex; justify-content: space-between;
-      font-size: 11px; color: var(--muted);
-      margin-top: 4px;
-    }
+.gbar{width:100%;max-width:480px;padding:0 20px;margin-bottom:10px}
+.bmeta{display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);
+  margin-bottom:5px;font-family:var(--fm)}
+.btrack{height:5px;border-radius:3px;background:var(--raised);overflow:hidden}
+.bfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--violet));
+  transition:width .08s linear;box-shadow:0 0 8px rgba(0,229,255,.5)}
+.bfill.danger{background:linear-gradient(90deg,var(--wrong),var(--magenta));box-shadow:0 0 8px rgba(255,59,92,.5)}
 
-    /* Question card */
-    .q-card {
-      width: 100%; max-width: 480px;
-      padding: 0 20px;
-      margin-bottom: 20px;
-      flex: 1;
-      display: flex; flex-direction: column;
-      justify-content: center;
-    }
-    .op-badge {
-      display: inline-flex; align-items: center;
-      font-size: 11px; letter-spacing: 3px; color: var(--muted);
-      text-transform: uppercase; gap: 6px;
-      margin-bottom: 16px;
-    }
-    .op-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--glow);
-      box-shadow: 0 0 6px var(--glow);
-    }
-    .question-text {
-      font-family: var(--font-hd);
-      font-size: clamp(38px, 12vw, 64px);
-      font-weight: 900;
-      line-height: 1.1;
-      letter-spacing: -1px;
-      color: var(--text);
-      margin-bottom: 24px;
-    }
-    .question-text .op-char {
-      color: var(--accent);
-      font-size: .9em;
-    }
-    .question-text .eq {
-      color: var(--muted);
-      font-size: .75em;
-    }
-    .question-text .answer-slot {
-      color: var(--glow);
-      border-bottom: 3px solid var(--glow);
-      padding-bottom: 4px;
-      min-width: 60px;
-      display: inline-block;
-      text-align: center;
-    }
+.lives-row{display:none;width:100%;max-width:480px;padding:0 20px;margin-bottom:6px;font-size:22px}
 
-    /* Answer options */
-    .answer-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      width: 100%; max-width: 480px;
-      padding: 0 20px;
-      margin-bottom: 16px;
-    }
-    .ans-btn {
-      padding: 22px 12px;
-      border-radius: var(--r-lg);
-      border: 1.5px solid var(--border);
-      background: var(--card);
-      font-family: var(--font-hd);
-      font-size: 26px; font-weight: 700;
-      color: var(--text);
-      transition: all .15s;
-      position: relative;
-      overflow: hidden;
-    }
-    .ans-btn:active { transform: scale(.95); }
-    .ans-btn.correct {
-      border-color: var(--green);
-      background: rgba(57,255,20,.12);
-      color: var(--green);
-      box-shadow: 0 0 20px rgba(57,255,20,.4);
-    }
-    .ans-btn.wrong {
-      border-color: var(--red);
-      background: rgba(255,45,85,.12);
-      color: var(--red);
-      box-shadow: 0 0 20px rgba(255,45,85,.3);
-    }
-    .ans-btn.reveal {
-      border-color: var(--green);
-      background: rgba(57,255,20,.08);
-    }
-    .ans-btn:disabled { pointer-events: none; }
+.qzone{width:100%;max-width:480px;padding:0 20px;flex:1;display:flex;flex-direction:column;justify-content:center}
+.qmeta{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.qchip{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 8px;border-radius:20px;
+  background:rgba(124,58,255,.12);border:1px solid rgba(124,58,255,.25);
+  font-size:11px;font-weight:700;letter-spacing:2px;color:var(--violet);text-transform:uppercase}
+.qdot{width:7px;height:7px;border-radius:50%;background:var(--violet);box-shadow:0 0 8px var(--violet)}
+.qnum{font-family:var(--fm);font-size:12px;color:var(--text-dim);margin-left:auto}
 
-    /* Combo bar */
-    .combo-section {
-      width: 100%; max-width: 480px;
-      padding: 0 20px;
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 8px;
-    }
-    .combo-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; flex-shrink: 0; }
-    .combo-dots {
-      display: flex; gap: 5px;
-    }
-    .combo-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--border);
-      transition: all .2s;
-    }
-    .combo-dot.lit {
-      background: var(--gold);
-      box-shadow: 0 0 6px var(--gold);
-    }
-    .combo-mult {
-      margin-left: auto;
-      font-family: var(--font-hd);
-      font-size: 14px;
-      color: var(--gold);
-    }
+.question{font-family:var(--fd);font-size:clamp(42px,12vw,68px);font-weight:800;
+  line-height:1.05;letter-spacing:-2px;color:var(--text);margin-bottom:10px}
+.question .qop{color:var(--magenta);font-size:.82em}
+.question .qeq{color:var(--text-dim);font-size:.65em}
+.question .qslot{color:var(--cyan);border-bottom:3px solid var(--cyan);padding-bottom:2px;
+  min-width:55px;display:inline-block;text-align:center;animation:sp 1.3s ease-in-out infinite}
+@keyframes sp{0%,100%{border-color:var(--cyan)}50%{border-color:rgba(0,229,255,.25)}}
 
-    /* ─── RESULT SCREEN ──────────────────────── */
-    #result { gap: 16px; }
+.cbar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.clbl{font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;font-weight:600;flex-shrink:0}
+.cdots{display:flex;gap:5px}
+.cd{width:8px;height:8px;border-radius:50%;background:var(--raised);transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.cd.on{background:var(--gold);box-shadow:0 0 8px var(--gold);transform:scale(1.25)}
+.cbonus{margin-left:auto;font-family:var(--fm);font-size:13px;color:var(--gold);font-weight:700;opacity:0;transition:opacity .2s}
+.cbonus.show{opacity:1}
 
-    .result-icon {
-      font-size: 64px;
-      animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
-    }
-    @keyframes popIn {
-      from { transform: scale(0) rotate(-20deg); opacity: 0; }
-      to   { transform: scale(1) rotate(0);      opacity: 1; }
-    }
-    .result-title {
-      font-family: var(--font-hd);
-      font-size: 28px; font-weight: 900;
-      letter-spacing: 3px;
-      background: linear-gradient(135deg, var(--gold), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .result-new-record {
-      font-size: 12px; letter-spacing: 4px; color: var(--gold);
-      text-transform: uppercase;
-      animation: pulse 1s ease-in-out infinite;
-      display: none;
-    }
-    .result-new-record.show { display: block; }
-    @keyframes pulse {
-      0%,100% { opacity: 1; } 50% { opacity: .4; }
-    }
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  width:100%;max-width:480px;padding:0 20px;margin-bottom:16px}
+.ans{height:80px;border-radius:var(--rlg);border:1.5px solid var(--border);background:var(--card);
+  font-family:var(--fd);font-size:28px;font-weight:700;color:var(--text);
+  transition:all .15s;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center}
+.ans::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--ac1,var(--violet)),var(--ac2,var(--cyan)));
+  opacity:0;transition:opacity .15s}
+.ans-t{position:relative;z-index:1}
+.ans:active:not([disabled]){transform:scale(.95)}
+.ans:active:not([disabled])::before{opacity:.1}
+.ans.correct{border-color:var(--correct)!important;background:rgba(0,255,135,.09)!important;
+  box-shadow:0 0 28px rgba(0,255,135,.35)!important}
+.ans.correct .ans-t{color:var(--correct)}
+.ans.wrong{border-color:var(--wrong)!important;background:rgba(255,59,92,.09)!important;
+  box-shadow:0 0 28px rgba(255,59,92,.3)!important}
+.ans.wrong .ans-t{color:var(--wrong)}
+.ans.reveal{border-color:rgba(0,255,135,.4);background:rgba(0,255,135,.05)}
+.ans[disabled]{pointer-events:none}
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      width: 100%; max-width: 360px;
-    }
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 16px;
-      text-align: center;
-    }
-    .stat-card.highlight {
-      border-color: var(--gold);
-      background: rgba(255,215,0,.06);
-    }
-    .stat-val {
-      font-family: var(--font-hd);
-      font-size: 28px; font-weight: 700;
-      color: var(--glow);
-    }
-    .stat-card.highlight .stat-val { color: var(--gold); }
-    .stat-lbl { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+/* RESULT */
+.result-inner{width:100%;max-width:440px;padding:24px 20px 60px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;min-height:100%}
+.rhero{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--rxl);
+  padding:32px 24px;text-align:center;position:relative;overflow:hidden}
+.rhero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(124,58,255,.14) 0%,transparent 70%)}
+.rtrophy{font-size:68px;display:block;margin-bottom:10px;position:relative;
+  animation:trophyin .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes trophyin{from{transform:scale(0) rotate(-15deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.rtitle{font-family:var(--fd);font-size:30px;font-weight:800;position:relative;
+  background:linear-gradient(135deg,var(--gold),var(--magenta));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.rrecord{display:none;align-items:center;justify-content:center;
+  padding:4px 12px;border-radius:20px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.3);
+  color:var(--gold);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  margin-top:10px;animation:rp 1.2s ease-in-out infinite}
+.rrecord.show{display:flex}
+@keyframes rp{0%,100%{opacity:1}50%{opacity:.4}}
+.rgrade{position:absolute;top:16px;right:20px;font-family:var(--fd);font-size:52px;font-weight:800;opacity:.08}
 
-    /* Op breakdown */
-    .op-breakdown {
-      width: 100%; max-width: 360px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 16px;
-    }
-    .ob-title { font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
-    .ob-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .ob-op { font-size: 18px; width: 28px; text-align: center; }
-    .ob-bar-bg { flex: 1; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
-    .ob-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--glow), var(--accent)); transition: width .6s ease; }
-    .ob-pct { font-size: 12px; color: var(--muted); width: 36px; text-align: right; font-family: var(--font-hd); }
+.rstats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.rs{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 12px;text-align:center}
+.rs.hi{border-color:rgba(255,184,0,.25);background:rgba(255,184,0,.04)}
+.rsv{font-family:var(--fd);font-size:28px;font-weight:800;color:var(--cyan);line-height:1}
+.rs.hi .rsv{color:var(--gold)}
+.rsl{font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-top:5px;font-weight:600}
 
-    .result-btns {
-      display: flex; gap: 12px;
-      width: 100%; max-width: 360px;
-    }
-    .btn-play-again {
-      flex: 2;
-      padding: 16px;
-      border-radius: var(--r-lg);
-      font-family: var(--font-hd);
-      font-size: 15px; font-weight: 700;
-      letter-spacing: 3px;
-      background: linear-gradient(135deg, var(--glow), var(--accent));
-      color: #000;
-      box-shadow: 0 0 20px rgba(0,245,255,.3);
-      transition: all .2s;
-    }
-    .btn-play-again:active { transform: scale(.97); }
-    .btn-home {
-      flex: 1;
-      padding: 16px;
-      border-radius: var(--r-lg);
-      font-family: var(--font-hd);
-      font-size: 14px; font-weight: 700;
-      letter-spacing: 2px;
-      border: 1.5px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      transition: all .2s;
-    }
-    .btn-home:active { transform: scale(.97); border-color: var(--muted); }
+.xpcard{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.xph{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.xplvl{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--violet)}
+.xpnxt{font-size:12px;color:var(--text-dim)}
+.xptrack{height:8px;border-radius:4px;background:var(--raised);overflow:hidden;margin-bottom:6px}
+.xpfill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--violet),var(--cyan));
+  width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(124,58,255,.4)}
+.xpearned{font-size:11px;color:var(--cyan);font-weight:700;letter-spacing:1px}
 
-    /* ─── PARTICLES ──────────────────────────── */
-    #particles {
-      position: fixed; inset: 0;
-      pointer-events: none;
-      z-index: 100;
-    }
-    .particle {
-      position: absolute;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      animation: particleFly .8s ease-out forwards;
-    }
-    @keyframes particleFly {
-      from { transform: translate(0,0) scale(1); opacity: 1; }
-      to   { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
-    }
+.achrow{width:100%;display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.achrow::-webkit-scrollbar{display:none}
+.ach{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:10px;
+  border:1.5px solid var(--gold);color:var(--gold);background:var(--card);
+  font-size:12px;font-weight:600;white-space:nowrap;
+  animation:chipIn .4s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes chipIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.ach-icon{font-size:18px}
 
-    /* ─── FEEDBACK FLASH ──────────────────────── */
-    #feedback-flash {
-      position: fixed; inset: 0;
-      pointer-events: none;
-      z-index: 50;
-      opacity: 0;
-      transition: opacity .1s;
-    }
-    #feedback-flash.correct-flash { background: radial-gradient(circle, rgba(57,255,20,.15) 0%, transparent 70%); opacity: 1; animation: flashOut .4s ease forwards; }
-    #feedback-flash.wrong-flash   { background: radial-gradient(circle, rgba(255,45,85,.2) 0%, transparent 70%);  opacity: 1; animation: flashOut .4s ease forwards; }
-    @keyframes flashOut { to { opacity: 0; } }
+.bdown{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.bdtitle{font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px;font-weight:600}
+.bdrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bdrow:last-child{margin-bottom:0}
+.bdicon{font-size:17px;width:26px;text-align:center}
+.bdlbl{font-size:12px;font-weight:600;color:var(--text-mid);width:78px}
+.bdtrack{flex:1;height:5px;border-radius:3px;background:var(--raised);overflow:hidden}
+.bdfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--violet),var(--cyan));transition:width .7s ease}
+.bdacc{font-family:var(--fm);font-size:12px;color:var(--text-dim);width:34px;text-align:right}
 
-    /* ─── STREAK POPUP ──────────────────────── */
-    .streak-popup {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-family: var(--font-hd);
-      font-size: 28px; font-weight: 900;
-      color: var(--gold);
-      text-shadow: 0 0 30px var(--gold);
-      pointer-events: none;
-      z-index: 200;
-      animation: streakAnim .7s cubic-bezier(.34,1.56,.64,1) forwards;
-      white-space: nowrap;
-    }
-    @keyframes streakAnim {
-      0%   { transform: translate(-50%,-50%) scale(0);   opacity: 0; }
-      40%  { transform: translate(-50%,-65%) scale(1.2); opacity: 1; }
-      100% { transform: translate(-50%,-80%) scale(.9);  opacity: 0; }
-    }
+.rbtns{display:flex;gap:10px;width:100%}
+.ragain{flex:2;padding:18px;border-radius:var(--rxl);font-family:var(--fd);font-size:15px;font-weight:800;
+  letter-spacing:2px;background:linear-gradient(135deg,var(--violet),var(--cyan));color:#fff;
+  box-shadow:0 0 30px rgba(124,58,255,.3);transition:transform .15s}
+.ragain:active{transform:scale(.97)}
+.rhomebtn{flex:1;padding:18px;border-radius:var(--rxl);font-family:var(--fd);font-size:18px;font-weight:700;
+  border:1.5px solid var(--border-md);background:var(--card);color:var(--text);transition:all .15s}
+.rhomebtn:active{transform:scale(.97);border-color:var(--violet)}
+.rshare{width:100%;padding:14px;border-radius:var(--rlg);font-family:var(--fd);font-size:13px;font-weight:700;
+  letter-spacing:2px;border:1.5px solid rgba(0,229,255,.25);background:rgba(0,229,255,.05);
+  color:var(--cyan);transition:transform .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.rshare:active{transform:scale(.97)}
 
-    /* Scrollable result */
-    #result { overflow-y: auto; padding-top: 32px; padding-bottom: 32px; justify-content: flex-start; }
+/* ONBOARD */
+#onboard{position:fixed;inset:0;background:rgba(7,7,16,.94);backdrop-filter:blur(14px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;z-index:999}
+#onboard.gone{display:none}
+.obcard{width:100%;max-width:380px;background:var(--card);border:1px solid var(--border-md);
+  border-radius:var(--rxl);padding:32px 26px;text-align:center}
+.obstep{display:none;flex-direction:column;align-items:center;gap:14px}
+.obstep.active{display:flex}
+.obicon{font-size:54px}
+.obtitle{font-family:var(--fd);font-size:24px;font-weight:800;line-height:1.2}
+.obdesc{font-size:14px;color:var(--text-mid);line-height:1.65;max-width:280px}
+.obdots{display:flex;gap:8px}
+.oddot{width:8px;height:8px;border-radius:50%;background:var(--raised);transition:all .2s}
+.oddot.on{background:var(--violet);box-shadow:0 0 8px var(--violet);transform:scale(1.3)}
+.obbtn{width:100%;padding:16px;margin-top:6px;border-radius:var(--rlg);font-family:var(--fd);
+  font-size:15px;font-weight:800;letter-spacing:2px;
+  background:linear-gradient(135deg,var(--violet),var(--cyan));color:#fff;transition:transform .15s}
+.obbtn:active{transform:scale(.97)}
+.obskip{font-size:12px;color:var(--text-dim);margin-top:14px;cursor:pointer;letter-spacing:1px;
+  text-decoration:underline;text-underline-offset:3px}
 
-    /* ─── RESPONSIVE ──────────────────────────── */
-    @media (min-height: 700px) {
-      .q-card { flex: unset; margin-bottom: 28px; }
-    }
-  </style>
+/* FX */
+#flash{position:fixed;inset:0;pointer-events:none;z-index:300;display:none}
+#flash.c{display:block;background:radial-gradient(circle,rgba(0,255,135,.12) 0%,transparent 70%);animation:ff .35s ease forwards}
+#flash.w{display:block;background:radial-gradient(circle,rgba(255,59,92,.15) 0%,transparent 70%);animation:ff .35s ease forwards}
+@keyframes ff{to{opacity:0}}
+#particles{position:fixed;inset:0;pointer-events:none;z-index:400}
+.pfly{position:absolute;border-radius:50%;animation:pf .7s ease-out forwards}
+@keyframes pf{from{transform:translate(0,0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+.spop{position:fixed;left:50%;top:38%;
+  font-family:var(--fd);font-size:30px;font-weight:800;color:var(--gold);
+  text-shadow:0 0 40px var(--gold);pointer-events:none;z-index:600;white-space:nowrap;
+  animation:spopa .75s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes spopa{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}40%{transform:translate(-50%,-58%) scale(1.1);opacity:1}100%{transform:translate(-50%,-78%) scale(.85);opacity:0}}
+.sfloat{position:fixed;font-family:var(--fd);font-size:20px;font-weight:800;color:var(--correct);
+  pointer-events:none;z-index:500;text-shadow:0 0 16px var(--correct);
+  animation:sfl .65s ease-out forwards}
+@keyframes sfl{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-55px) scale(.8);opacity:0}}
+
+@media(max-height:680px){
+  .question{font-size:clamp(34px,10vw,52px)}
+  .ans{height:66px;font-size:23px}
+  .hero{padding:30px 0 16px}
+  .logo-mark{width:64px;height:64px;font-size:30px}
+}
+</style>
 </head>
 <body>
 
-<!-- Particle canvas -->
+<div id="flash"></div>
 <div id="particles"></div>
-<div id="feedback-flash"></div>
 
-<!-- ══════════════════ HOME ══════════════════ -->
+<!-- ONBOARDING -->
+<div id="onboard">
+  <div class="obcard">
+    <div class="obstep active" id="ob0">
+      <div class="obicon">🧮</div>
+      <div class="obtitle">Welcome to<br>Math Saga</div>
+      <div class="obdesc">The most advanced math training game. Sharpen your mind, beat records, conquer every level.</div>
+      <div class="obdots"><div class="oddot on"></div><div class="oddot"></div><div class="oddot"></div></div>
+      <button class="obbtn" id="obn0">GET STARTED →</button>
+    </div>
+    <div class="obstep" id="ob1">
+      <div class="obicon">⚡</div>
+      <div class="obtitle">Race the Clock</div>
+      <div class="obdesc">Answer before time runs out. Build streaks for bonus XP. Hit 5 in a row to activate COMBO mode!</div>
+      <div class="obdots"><div class="oddot"></div><div class="oddot on"></div><div class="oddot"></div></div>
+      <button class="obbtn" id="obn1">NEXT →</button>
+    </div>
+    <div class="obstep" id="ob2">
+      <div class="obicon">🏆</div>
+      <div class="obtitle">Master All Levels</div>
+      <div class="obdesc">4 game modes, 10 difficulty levels, XP progression, achievements and daily challenges.</div>
+      <div class="obdots"><div class="oddot"></div><div class="oddot"></div><div class="oddot on"></div></div>
+      <button class="obbtn" id="obn2">LET'S GO →</button>
+    </div>
+  </div>
+  <div class="obskip" id="obskip">Skip intro</div>
+</div>
+
+<!-- HOME -->
 <div class="screen" id="home">
-  <div class="logo-wrap">
-    <div class="logo-icon">🌟</div>
-    <div class="logo-title">MATH SAGA</div>
-    <div class="logo-sub">Adventure · Numbers · Mastery</div>
-  </div>
-
-  <div class="home-stats">
-    <div class="hstat">
-      <div class="hstat-val" id="hs-streak">0</div>
-      <div class="hstat-lbl">Best 🔥</div>
+  <div class="home-inner">
+    <div class="hero">
+      <div class="hero-glow"></div>
+      <div class="logo-mark">∞</div>
+      <div class="logo-title">MATH SAGA</div>
+      <div class="logo-tag">Master · Compete · Conquer</div>
     </div>
-    <div class="hstat">
-      <div class="hstat-val" id="hs-total">0</div>
-      <div class="hstat-lbl">Solved</div>
+
+    <div class="stats-bar">
+      <div class="sc"><div class="sc-val" id="h-best">0</div><div class="sc-lbl">Best 🔥</div></div>
+      <div class="sc"><div class="sc-val" id="h-solved">0</div><div class="sc-lbl">Solved</div></div>
+      <div class="sc"><div class="sc-val" id="h-xp">0</div><div class="sc-lbl">XP</div></div>
     </div>
-    <div class="hstat">
-      <div class="hstat-val" id="hs-avg">—</div>
-      <div class="hstat-lbl">Avg (s)</div>
+
+    <div class="daily" id="daily-btn">
+      <div class="daily-icon">📅</div>
+      <div>
+        <div class="daily-title">Daily Challenge</div>
+        <div class="daily-sub" id="daily-sub">20 questions · +50 Bonus XP</div>
+      </div>
+      <div class="daily-arr">→</div>
     </div>
-  </div>
 
-  <div class="section-label">SELECT LEVEL</div>
-  <div class="level-grid" id="level-grid">
-    <!-- generated by JS -->
-  </div>
-
-  <div class="section-label">OPERATIONS</div>
-  <div class="ops-row" id="ops-row">
-    <button class="op-btn on" data-op="add">+</button>
-    <button class="op-btn on" data-op="sub">−</button>
-    <button class="op-btn on" data-op="mul">×</button>
-    <button class="op-btn on" data-op="div">÷</button>
-    <button class="op-btn on" data-op="mod">%</button>
-  </div>
-
-  <button class="play-btn" id="play-btn">▶ PLAY</button>
-</div>
-
-<!-- ══════════════════ GAME ══════════════════ -->
-<div class="screen hidden" id="game">
-  <div class="game-header">
-    <button class="quit-btn" id="quit-btn">✕</button>
-    <div class="game-info">
-      <div class="info-pill">🌟 LVL <b id="g-level">1</b></div>
-      <div class="info-pill streak-pill">🔥 <b id="g-streak">0</b></div>
-      <div class="info-pill">✓ <b id="g-correct">0</b></div>
+    <div class="sect"><div class="sect-line"></div><div class="sect-lbl">Game Mode</div><div class="sect-line"></div></div>
+    <div class="mode-grid" id="mode-grid">
+      <div class="mc sel" data-mode="classic" style="--mc1:var(--violet);--mc2:var(--cyan)">
+        <div class="mc-icon">⚡</div><div class="mc-name">Classic</div><div class="mc-desc">Race the clock, build streaks</div>
+      </div>
+      <div class="mc" data-mode="zen" style="--mc1:#00ff87;--mc2:var(--cyan)">
+        <div class="mc-icon">🌊</div><div class="mc-name">Zen</div><div class="mc-desc">No timer, pure focus</div>
+        <div class="mc-badge" style="background:rgba(0,255,135,.14);color:#00ff87;border:1px solid rgba(0,255,135,.3)">CALM</div>
+      </div>
+      <div class="mc" data-mode="blitz" style="--mc1:#ff2d78;--mc2:var(--gold)">
+        <div class="mc-icon">💥</div><div class="mc-name">Blitz</div><div class="mc-desc">3 seconds per question</div>
+        <div class="mc-badge" style="background:rgba(255,45,120,.14);color:#ff2d78;border:1px solid rgba(255,45,120,.3)">HARD</div>
+      </div>
+      <div class="mc" data-mode="survival" style="--mc1:var(--gold);--mc2:var(--coral)">
+        <div class="mc-icon">💀</div><div class="mc-name">Survival</div><div class="mc-desc">3 lives. How far can you go?</div>
+        <div class="mc-badge" style="background:rgba(255,184,0,.14);color:var(--gold);border:1px solid rgba(255,184,0,.3)">NEW</div>
+      </div>
     </div>
-  </div>
 
-  <div class="timer-wrap">
-    <div class="timer-bar-bg">
-      <div class="timer-bar" id="timer-bar" style="width:100%"></div>
+    <div class="sect"><div class="sect-line"></div><div class="sect-lbl">Difficulty</div><div class="sect-line"></div></div>
+    <div class="diff-grid" id="diff-grid"></div>
+
+    <div class="sect"><div class="sect-line"></div><div class="sect-lbl">Operations</div><div class="sect-line"></div></div>
+    <div class="ops-row" id="ops-row">
+      <button class="ot on" data-op="add">+</button>
+      <button class="ot on" data-op="sub">−</button>
+      <button class="ot on" data-op="mul">×</button>
+      <button class="ot on" data-op="div">÷</button>
+      <button class="ot on" data-op="mod">%</button>
     </div>
-    <div class="timer-label">
-      <span id="timer-elapsed">0.0s</span>
-      <span id="timer-limit"></span>
-    </div>
-  </div>
 
-  <div class="q-card">
-    <div class="op-badge"><div class="op-dot"></div><span id="op-name">ADDITION</span></div>
-    <div class="question-text" id="question-text"></div>
-  </div>
+    <button class="cta" id="play-btn">▶  PLAY NOW</button>
 
-  <div class="combo-section">
-    <span class="combo-label">COMBO</span>
-    <div class="combo-dots" id="combo-dots">
-      <div class="combo-dot"></div>
-      <div class="combo-dot"></div>
-      <div class="combo-dot"></div>
-      <div class="combo-dot"></div>
-      <div class="combo-dot"></div>
-    </div>
-    <span class="combo-mult" id="combo-mult"></span>
-  </div>
-
-  <div class="answer-grid" id="answer-grid">
-    <!-- generated by JS -->
+    <div class="sect"><div class="sect-line"></div><div class="sect-lbl">Top Players</div><div class="sect-line"></div></div>
+    <div class="lb-box"><div class="lb-hd">LEADERBOARD</div><div id="lb-rows"></div></div>
   </div>
 </div>
 
-<!-- ══════════════════ RESULT ══════════════════ -->
-<div class="screen hidden" id="result">
-  <div class="result-icon" id="result-icon">🏆</div>
-  <div class="result-title" id="result-title">GAME OVER</div>
-  <div class="result-new-record" id="new-record">✦ NEW RECORD ✦</div>
-
-  <div class="stats-grid">
-    <div class="stat-card highlight">
-      <div class="stat-val" id="r-streak">0</div>
-      <div class="stat-lbl">Best Streak 🔥</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="r-correct">0</div>
-      <div class="stat-lbl">Correct ✓</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="r-accuracy">0%</div>
-      <div class="stat-lbl">Accuracy</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="r-avgtime">0s</div>
-      <div class="stat-lbl">Avg Speed</div>
+<!-- GAME -->
+<div class="screen" id="game">
+  <div class="gh">
+    <button class="gquit" id="quit-btn">✕</button>
+    <div class="gpills">
+      <div class="gp" id="mode-pill">⚡ CLASSIC</div>
+      <div class="gp">LVL&nbsp;<span class="gpv" id="g-lvl">1</span></div>
+      <div class="gp sp">🔥&nbsp;<span class="gpv" id="g-streak">0</span></div>
+      <div class="gp">✓&nbsp;<span class="gpv" id="g-correct">0</span></div>
     </div>
   </div>
-
-  <div class="op-breakdown" id="op-breakdown">
-    <div class="ob-title">BY OPERATION</div>
-    <!-- rows injected by JS -->
+  <div class="gbar">
+    <div class="bmeta"><span id="g-elapsed">0.0s</span><span id="g-limit"></span></div>
+    <div class="btrack"><div class="bfill" id="bfill" style="width:100%"></div></div>
   </div>
+  <div class="lives-row" id="lives-row"><span id="lives-disp">❤️❤️❤️</span></div>
+  <div class="qzone">
+    <div class="qmeta">
+      <div class="qchip"><div class="qdot"></div><span id="op-name">ADDITION</span></div>
+      <div class="qnum">Q&nbsp;<span id="q-num">1</span></div>
+    </div>
+    <div class="question" id="question"></div>
+    <div class="cbar">
+      <span class="clbl">COMBO</span>
+      <div class="cdots" id="cdots">
+        <div class="cd"></div><div class="cd"></div><div class="cd"></div><div class="cd"></div><div class="cd"></div>
+      </div>
+      <span class="cbonus" id="cbonus"></span>
+    </div>
+  </div>
+  <div class="ans-grid" id="ans-grid"></div>
+</div>
 
-  <div class="result-btns">
-    <button class="btn-play-again" id="play-again-btn">▶ AGAIN</button>
-    <button class="btn-home" id="home-btn">⌂ HOME</button>
+<!-- RESULT -->
+<div class="screen" id="result">
+  <div class="result-inner">
+    <div class="rhero">
+      <span class="rtrophy" id="r-trophy">🏆</span>
+      <div class="rtitle" id="r-title">CHAMPION!</div>
+      <div class="rrecord" id="r-record">✦ NEW RECORD ✦</div>
+      <div class="rgrade" id="r-grade">S</div>
+    </div>
+
+    <div class="achrow" id="ach-row" style="display:none"></div>
+
+    <div class="rstats">
+      <div class="rs hi"><div class="rsv" id="r-streak">0</div><div class="rsl">Best Streak 🔥</div></div>
+      <div class="rs"><div class="rsv" id="r-correct">0</div><div class="rsl">Correct ✓</div></div>
+      <div class="rs"><div class="rsv" id="r-acc">0%</div><div class="rsl">Accuracy</div></div>
+      <div class="rs"><div class="rsv" id="r-speed">—</div><div class="rsl">Avg Speed</div></div>
+    </div>
+
+    <div class="xpcard">
+      <div class="xph">
+        <div class="xplvl" id="xp-lvl-lbl">Level 1 Apprentice</div>
+        <div class="xpnxt" id="xp-nxt">0 / 200 XP</div>
+      </div>
+      <div class="xptrack"><div class="xpfill" id="xp-fill"></div></div>
+      <div class="xpearned" id="xp-earned">+0 XP earned</div>
+    </div>
+
+    <div class="bdown">
+      <div class="bdtitle">Performance By Operation</div>
+      <div id="bd-rows"></div>
+    </div>
+
+    <div class="rbtns">
+      <button class="ragain" id="r-again">▶ PLAY AGAIN</button>
+      <button class="rhomebtn" id="r-home">⌂</button>
+    </div>
+    <button class="rshare" id="r-share">📤&nbsp; SHARE MY SCORE</button>
   </div>
 </div>
 
 <script>
-/* ══════════════════════════════════════════════
-   MATH SAGA — CORE ENGINE
-══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   MATH SAGA — ENGINE v3 (full clean rewrite)
+═══════════════════════════════════════════════ */
 
-// ─── STORAGE ──────────────────────────────────
-const STORE = {
-  get(k, def) {
-    try { const v = localStorage.getItem('mb_' + k); return v !== null ? JSON.parse(v) : def; }
-    catch { return def; }
+// STORAGE
+var S = {
+  get: function(k, d) {
+    try { var v = localStorage.getItem('ms3_' + k); return v !== null ? JSON.parse(v) : d; }
+    catch(e) { return d; }
   },
-  set(k, v) { try { localStorage.setItem('mb_' + k, JSON.stringify(v)); } catch {} }
-};
-
-// ─── STATE ────────────────────────────────────
-let state = {
-  level: 1,
-  ops: ['add','sub','mul','div','mod'],
-  // game session
-  streak: 0,
-  bestStreak: 0,
-  correct: 0,
-  total: 0,
-  combo: 0,           // 0–5
-  currentOp: '',
-  currentAnswer: 0,
-  questionStart: 0,
-  times: [],
-  opStats: { add:{c:0,t:0}, sub:{c:0,t:0}, mul:{c:0,t:0}, div:{c:0,t:0}, mod:{c:0,t:0} },
-  timerInterval: null,
-  timeLimitMs: 0,
-  locked: false,
-};
-
-const GLOBAL = {
-  bestStreak: STORE.get('bestStreak', 0),
-  totalSolved: STORE.get('totalSolved', 0),
-  avgTime: STORE.get('avgTime', 0),
-  avgCount: STORE.get('avgCount', 0),
-};
-
-const OP_NAMES = { add:'ADDITION', sub:'SUBTRACTION', mul:'MULTIPLY', div:'DIVISION', mod:'MODULUS' };
-const OP_CHARS = { add:'+', sub:'−', mul:'×', div:'÷', mod:'%' };
-const OP_EMOJIS = { add:'➕', sub:'➖', mul:'✖️', div:'➗', mod:'🔢' };
-
-// Time limit (ms) per level — decreases as level rises
-function timeLimitForLevel(lvl) {
-  // 10s at lvl 1, 5s at lvl 10
-  return Math.max(5000, 11000 - lvl * 600);
-}
-
-// ─── QUESTION GENERATION ─────────────────────
-function genQuestion(op, level) {
-  const scale = level;
-  let a, b, answer;
-
-  if (op === 'add') {
-    a = rand(1, 10 * scale);
-    b = rand(1, 10 * scale);
-    answer = a + b;
-  } else if (op === 'sub') {
-    b = rand(1, 10 * scale);
-    answer = rand(0, 10 * scale);
-    a = answer + b;
-  } else if (op === 'mul') {
-    a = rand(1, Math.max(2, 5 * scale));
-    b = rand(1, Math.max(2, 5 * scale));
-    answer = a * b;
-  } else if (op === 'div') {
-    b = rand(1, Math.max(2, 5 * scale));
-    answer = rand(1, Math.max(2, 5 * scale));
-    a = answer * b;
-  } else if (op === 'mod') {
-    b = rand(2, Math.max(3, 5 * scale));
-    answer = rand(0, b - 1);
-    a = rand(1, 8 * scale) * b + answer;
+  set: function(k, v) {
+    try { localStorage.setItem('ms3_' + k, JSON.stringify(v)); } catch(e) {}
   }
-  return { a, b, answer, op };
-}
+};
 
-function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+// CONSTANTS
+var OP_NAME  = {add:'ADDITION',   sub:'SUBTRACTION', mul:'MULTIPLY',  div:'DIVISION', mod:'MODULUS'};
+var OP_CHAR  = {add:'+',          sub:'−',           mul:'×',         div:'÷',        mod:'%'};
+var OP_EMOJI = {add:'➕',         sub:'➖',          mul:'✖️',        div:'➗',       mod:'🔢'};
+var OP_LABEL = {add:'Addition',   sub:'Subtraction',  mul:'Multiply',  div:'Division', mod:'Modulus'};
+var MODE_LABEL = {classic:'⚡ CLASSIC', zen:'🌊 ZEN', blitz:'💥 BLITZ', survival:'💀 SURVIVAL'};
 
-function pickOp() {
-  const ops = state.ops;
-  return ops[Math.floor(Math.random() * ops.length)];
-}
+var XP_TIERS = [
+  {xp:0,    title:'Apprentice'},
+  {xp:200,  title:'Scholar'},
+  {xp:500,  title:'Calculator'},
+  {xp:1000, title:'Solver'},
+  {xp:2000, title:'Genius'},
+  {xp:4000, title:'Wizard'},
+  {xp:7500, title:'Master'},
+  {xp:12000,title:'Legend'},
+  {xp:20000,title:'Champion'},
+  {xp:35000,title:'Mythic'}
+];
 
-// ─── WRONG ANSWERS ────────────────────────────
-function genChoices(answer) {
-  const choices = new Set([answer]);
-  const attempts = 60;
-  let i = 0;
-  while (choices.size < 4 && i++ < attempts) {
-    const offset = rand(1, Math.max(5, Math.ceil(Math.abs(answer) * .4) + 3));
-    const sign = Math.random() < .5 ? 1 : -1;
-    const wrong = answer + sign * offset;
-    if (wrong !== answer) choices.add(wrong);
-  }
-  // fallback
-  let extra = 1;
-  while (choices.size < 4) { if (!choices.has(answer + extra)) choices.add(answer + extra); extra++; }
-  return shuffle([...choices]);
+var ACHIEVEMENTS = [
+  {id:'first',  icon:'🎯', name:'First Blood',  check: function(st){return st.correct>=1}},
+  {id:'s5',     icon:'🔥', name:'On Fire',      check: function(st){return st.bestStreak>=5}},
+  {id:'s10',    icon:'💥', name:'Inferno',      check: function(st){return st.bestStreak>=10}},
+  {id:'s20',    icon:'⚡', name:'Lightning',    check: function(st){return st.bestStreak>=20}},
+  {id:'perf10', icon:'💎', name:'Perfect 10',   check: function(st){return st.total>=10 && st.correct===st.total}},
+  {id:'speed',  icon:'🚀', name:'Speed Demon',  check: function(st){
+    if(!st.times || !st.times.length) return false;
+    var sum=0; for(var i=0;i<st.times.length;i++) sum+=st.times[i];
+    return (sum/st.times.length)<2;
+  }},
+  {id:'cent',   icon:'💯', name:'Centurion',    check: function(st){return st.globalCorrect>=100}},
+  {id:'allops', icon:'🔮', name:'All-Rounder',  check: function(st){
+    return ['add','sub','mul','div','mod'].every(function(op){return st.opStats[op].c>0});
+  }},
+  {id:'blitzm', icon:'🌀', name:'Blitz Master', check: function(st){return st.mode==='blitz' && st.total>=5}},
+  {id:'surv',   icon:'🛡️', name:'Survivor',     check: function(st){return st.mode==='survival' && st.survived}},
+];
+
+// GLOBAL PERSISTENT STATE
+var G = {
+  bestStreak:  S.get('bestStreak', 0),
+  totalSolved: S.get('totalSolved', 0),
+  xp:          S.get('xp', 0),
+  achievements:S.get('achievements', []),
+  dailyDone:   S.get('dailyDone', ''),
+  lb:          S.get('lb', [
+    {name:'AceCalc',   score:9840},
+    {name:'MathWiz',   score:8720},
+    {name:'NumbNinja', score:7550},
+    {name:'You',       score:0, isYou:true},
+  ])
+};
+
+// SESSION STATE
+var ST = {
+  level:1, mode:'classic', ops:['add','sub','mul','div','mod'],
+  streak:0, bestStreak:0, correct:0, total:0, combo:0,
+  currentOp:'', currentAnswer:0, qStart:0, times:[],
+  lives:3, survived:false, isDaily:false, qCount:0,
+  opStats:{add:{c:0,t:0},sub:{c:0,t:0},mul:{c:0,t:0},div:{c:0,t:0},mod:{c:0,t:0}},
+  timer:null, timeLimitMs:0, locked:false
+};
+
+// HELPERS
+function el(id) { return document.getElementById(id); }
+function rand(a, b) { return Math.floor(Math.random()*(b-a+1))+a; }
+
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for(var i=0; i<screens.length; i++) screens[i].classList.remove('active');
+  el(id).classList.add('active');
 }
 
 function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  var a = arr.slice();
+  for(var i=a.length-1; i>0; i--) {
+    var j = Math.floor(Math.random()*(i+1));
+    var tmp=a[i]; a[i]=a[j]; a[j]=tmp;
   }
-  return arr;
+  return a;
 }
 
-// ─── UI HELPERS ───────────────────────────────
-function show(id) { document.getElementById(id).classList.remove('hidden'); }
-function hide(id) { document.getElementById(id).classList.add('hidden'); }
+function timeLimit(lvl, mode) {
+  if(mode==='zen')   return 999999;
+  if(mode==='blitz') return 3000;
+  return Math.max(5000, 12000 - lvl*700);
+}
 
-function $ (id) { return document.getElementById(id); }
+// XP
+function xpTierIdx(xp) {
+  var i=0;
+  for(var t=XP_TIERS.length-1; t>=0; t--) {
+    if(xp >= XP_TIERS[t].xp) { i=t; break; }
+  }
+  return i;
+}
+function xpTitle(xp) { return XP_TIERS[xpTierIdx(xp)].title; }
+function xpProgress(xp) {
+  var i = xpTierIdx(xp);
+  var cur = XP_TIERS[i];
+  var nxt = XP_TIERS[i+1];
+  if(!nxt) return {pct:100, label:'MAX LEVEL'};
+  var pct = ((xp-cur.xp)/(nxt.xp-cur.xp))*100;
+  return {pct: Math.min(100,pct), label: (xp-cur.xp)+' / '+(nxt.xp-cur.xp)+' XP'};
+}
+function calcXP(st) {
+  var xp = st.correct*10 + st.bestStreak*5;
+  if(st.mode==='blitz')   xp = Math.floor(xp*2);
+  if(st.mode==='survival' && st.survived) xp += 100;
+  if(st.isDaily) xp += 50;
+  var acc = st.total ? st.correct/st.total : 0;
+  if(acc>=1) xp+=30; else if(acc>=.9) xp+=15;
+  return Math.floor(xp);
+}
 
-// ─── INIT HOME ────────────────────────────────
+// QUESTION GENERATION
+function genQ(op, lvl) {
+  var s=lvl, a, b, ans;
+  if(op==='add') { a=rand(1,10*s); b=rand(1,10*s); ans=a+b; }
+  else if(op==='sub') { b=rand(1,10*s); ans=rand(0,10*s); a=ans+b; }
+  else if(op==='mul') { a=rand(1,Math.max(2,5*s)); b=rand(1,Math.max(2,5*s)); ans=a*b; }
+  else if(op==='div') { b=rand(1,Math.max(2,5*s)); ans=rand(1,Math.max(2,5*s)); a=ans*b; }
+  else { b=rand(2,Math.max(3,5*s)); ans=rand(0,b-1); a=rand(1,8*s)*b+ans; }
+  return {a:a, b:b, ans:ans, op:op};
+}
+
+function genChoices(ans) {
+  var set = [ans];
+  var i = 0;
+  while(set.length < 4 && i++ < 80) {
+    var d = rand(1, Math.max(5, Math.ceil(Math.abs(ans)*.4)+3));
+    var w = ans + (Math.random()<.5 ? 1 : -1)*d;
+    if(w !== ans && set.indexOf(w)===-1) set.push(w);
+  }
+  var e=1;
+  while(set.length < 4) { if(set.indexOf(ans+e)===-1) set.push(ans+e); e++; }
+  return shuffle(set);
+}
+
+// ONBOARDING
+var obStep = 0;
+
+function obNext() {
+  el('ob'+obStep).classList.remove('active');
+  obStep = Math.min(2, obStep+1);
+  el('ob'+obStep).classList.add('active');
+}
+
+function obFinish() {
+  el('onboard').classList.add('gone');
+  S.set('onboarded', true);
+  showScreen('home');
+  initHome();
+}
+
+el('obn0').addEventListener('click', obNext);
+el('obn1').addEventListener('click', obNext);
+el('obn2').addEventListener('click', obFinish);
+el('obskip').addEventListener('click', obFinish);
+
+if(S.get('onboarded', false)) {
+  el('onboard').classList.add('gone');
+  showScreen('home');
+  initHome();
+}
+
+// HOME
 function initHome() {
-  $('hs-streak').textContent = GLOBAL.bestStreak;
-  $('hs-total').textContent  = GLOBAL.totalSolved;
-  $('hs-avg').textContent    = GLOBAL.avgCount > 0 ? (GLOBAL.avgTime / GLOBAL.avgCount).toFixed(1) : '—';
+  el('h-best').textContent   = G.bestStreak;
+  el('h-solved').textContent = G.totalSolved;
+  el('h-xp').textContent     = G.xp;
 
-  // Level grid
-  const grid = $('level-grid');
-  grid.innerHTML = '';
-  for (let i = 1; i <= 10; i++) {
-    const btn = document.createElement('button');
-    btn.className = 'lvl-btn' + (i === state.level ? ' active-lvl' : '');
-    btn.innerHTML = `<span class="lvl-num">${i}</span><span class="lvl-stars">${'★'.repeat(Math.ceil(i/3.4))}</span>`;
-    btn.addEventListener('click', () => {
-      state.level = i;
-      grid.querySelectorAll('.lvl-btn').forEach(b => b.classList.remove('active-lvl'));
-      btn.classList.add('active-lvl');
-    });
-    grid.appendChild(btn);
+  var today = new Date().toDateString();
+  if(G.dailyDone === today) {
+    el('daily-sub').textContent = '✓ Completed! Come back tomorrow';
+    el('daily-sub').style.color = 'var(--lime)';
+  } else {
+    el('daily-sub').textContent = '20 questions · +50 Bonus XP today';
+    el('daily-sub').style.color = '';
+  }
+
+  // Diff buttons
+  var dg = el('diff-grid');
+  dg.innerHTML = '';
+  for(var i=1; i<=10; i++) {
+    (function(lvl){
+      var b = document.createElement('button');
+      b.className = 'db' + (lvl===ST.level ? ' sel' : '');
+      b.innerHTML = '<span>'+lvl+'</span><span class="dbar"></span>';
+      b.addEventListener('click', function(){
+        ST.level = lvl;
+        var btns = dg.querySelectorAll('.db');
+        for(var j=0;j<btns.length;j++) btns[j].classList.remove('sel');
+        b.classList.add('sel');
+      });
+      dg.appendChild(b);
+    })(i);
+  }
+
+  // Mode cards
+  var mcs = document.querySelectorAll('.mc');
+  for(var m=0; m<mcs.length; m++) {
+    (function(card){
+      card.classList.toggle('sel', card.dataset.mode === ST.mode);
+      card.addEventListener('click', function(){
+        ST.mode = card.dataset.mode;
+        for(var x=0;x<mcs.length;x++) mcs[x].classList.remove('sel');
+        card.classList.add('sel');
+      });
+    })(mcs[m]);
   }
 
   // Op toggles
-  document.querySelectorAll('.op-btn').forEach(btn => {
-    const op = btn.dataset.op;
-    if (state.ops.includes(op)) btn.classList.add('on'); else btn.classList.remove('on');
-    btn.onclick = () => {
-      const idx = state.ops.indexOf(op);
-      if (idx > -1) {
-        if (state.ops.length > 1) { state.ops.splice(idx, 1); btn.classList.remove('on'); }
-      } else {
-        state.ops.push(op); btn.classList.add('on');
-      }
-    };
-  });
+  var ots = document.querySelectorAll('.ot');
+  for(var o=0; o<ots.length; o++) {
+    (function(btn){
+      btn.classList.toggle('on', ST.ops.indexOf(btn.dataset.op) > -1);
+      btn.addEventListener('click', function(){
+        var op = btn.dataset.op;
+        var idx = ST.ops.indexOf(op);
+        if(idx > -1) {
+          if(ST.ops.length > 1) { ST.ops.splice(idx,1); btn.classList.remove('on'); }
+        } else {
+          ST.ops.push(op); btn.classList.add('on');
+        }
+      });
+    })(ots[o]);
+  }
+
+  renderLB();
 }
 
-// ─── START GAME ───────────────────────────────
+function renderLB() {
+  var sorted = G.lb.slice();
+  for(var i=0;i<sorted.length;i++) {
+    if(sorted[i].isYou) sorted[i].score = G.bestStreak*100 + G.totalSolved;
+  }
+  sorted.sort(function(a,b){return b.score-a.score});
+  var medals = ['🥇','🥈','🥉'];
+  var html = '';
+  var limit = Math.min(4, sorted.length);
+  for(var i=0;i<limit;i++) {
+    var r = sorted[i];
+    html += '<div class="lb-row">'
+      + '<div class="lb-rank'+(i===0?' g':'')+'">'+(medals[i]||('#'+(i+1)))+'</div>'
+      + '<div class="lb-name"'+(r.isYou?' style="color:var(--cyan)"':'')+'>'+r.name+(r.isYou?' (You)':'')+'</div>'
+      + '<div class="lb-score">'+r.score.toLocaleString()+'</div>'
+      + '</div>';
+  }
+  el('lb-rows').innerHTML = html;
+}
+
+// GAME
 function startGame() {
-  if (state.ops.length === 0) return;
-  state.streak = 0;
-  state.bestStreak = 0;
-  state.correct = 0;
-  state.total = 0;
-  state.combo = 0;
-  state.times = [];
-  state.opStats = { add:{c:0,t:0}, sub:{c:0,t:0}, mul:{c:0,t:0}, div:{c:0,t:0}, mod:{c:0,t:0} };
-  state.timeLimitMs = timeLimitForLevel(state.level);
-  $('g-level').textContent = state.level;
-  $('timer-limit').textContent = (state.timeLimitMs/1000).toFixed(0) + 's max';
+  if(!ST.ops.length) return;
+  ST.streak=0; ST.bestStreak=0; ST.correct=0; ST.total=0;
+  ST.combo=0; ST.times=[]; ST.lives=3; ST.survived=false; ST.qCount=0;
+  ST.opStats = {add:{c:0,t:0},sub:{c:0,t:0},mul:{c:0,t:0},div:{c:0,t:0},mod:{c:0,t:0}};
+  ST.timeLimitMs = timeLimit(ST.level, ST.mode);
 
-  hide('home'); hide('result');
-  show('game');
-  nextQuestion();
+  el('g-lvl').textContent     = ST.level;
+  el('mode-pill').textContent = MODE_LABEL[ST.mode];
+  el('g-limit').textContent   = ST.mode==='zen' ? '∞' : (ST.timeLimitMs/1000).toFixed(0)+'s';
+
+  var lr = el('lives-row');
+  lr.style.display = ST.mode==='survival' ? 'block' : 'none';
+  renderLives();
+
+  showScreen('game');
+  nextQ();
 }
 
-// ─── QUESTION ────────────────────────────────
-function nextQuestion() {
-  state.locked = false;
-  const op = pickOp();
-  const q = genQuestion(op, state.level);
-  state.currentOp = op;
-  state.currentAnswer = q.answer;
-  state.questionStart = performance.now();
+function renderLives() {
+  var s='';
+  for(var i=0;i<3;i++) s += (i < ST.lives ? '❤️' : '🖤');
+  el('lives-disp').textContent = s;
+}
 
-  // update UI
-  $('op-name').textContent = OP_NAMES[op];
-  $('question-text').innerHTML =
-    `<span class="num">${q.a}</span> <span class="op-char">${OP_CHARS[op]}</span> <span class="num">${q.b}</span> <span class="eq">=</span> <span class="answer-slot">?</span>`;
+function nextQ() {
+  if(ST.isDaily && ST.qCount >= 20) { endGame(); return; }
+  ST.locked = false;
+  ST.qCount++;
+  var op = ST.ops[Math.floor(Math.random()*ST.ops.length)];
+  var q = genQ(op, ST.level);
+  ST.currentOp = op;
+  ST.currentAnswer = q.ans;
+  ST.qStart = performance.now();
 
-  // choices
-  const choices = genChoices(q.answer);
-  const grid = $('answer-grid');
-  grid.innerHTML = '';
-  choices.forEach(val => {
-    const btn = document.createElement('button');
-    btn.className = 'ans-btn';
-    btn.textContent = val;
-    btn.addEventListener('click', () => handleAnswer(val, btn, choices, q.answer));
-    grid.appendChild(btn);
-  });
+  el('op-name').textContent = OP_NAME[op];
+  el('q-num').textContent   = ST.qCount;
+  el('question').innerHTML  =
+    q.a+' <span class="qop">'+OP_CHAR[op]+'</span> '+q.b+' <span class="qeq">=</span> <span class="qslot">?</span>';
 
-  // streak + combo
-  $('g-streak').textContent  = state.streak;
-  $('g-correct').textContent = state.correct;
-  updateComboDots();
+  var choices = genChoices(q.ans);
+  var ag = el('ans-grid');
+  ag.innerHTML = '';
+  var palettes = [
+    ['var(--violet)','var(--cyan)'],
+    ['var(--magenta)','var(--violet)'],
+    ['var(--cyan)','var(--lime)'],
+    ['var(--gold)','var(--coral)']
+  ];
+  for(var i=0; i<choices.length; i++) {
+    (function(val, idx){
+      var b = document.createElement('button');
+      b.className = 'ans';
+      b.style.cssText = '--ac1:'+palettes[idx][0]+';--ac2:'+palettes[idx][1];
+      b.innerHTML = '<span class="ans-t">'+val+'</span>';
+      b.addEventListener('click', function(){ handleAns(val, b, q.ans); });
+      ag.appendChild(b);
+    })(choices[i], i);
+  }
 
-  // timer
+  el('g-streak').textContent  = ST.streak;
+  el('g-correct').textContent = ST.correct;
+  updateCombo();
   startTimer();
 }
 
-// ─── TIMER ───────────────────────────────────
 function startTimer() {
-  clearInterval(state.timerInterval);
-  const bar   = $('timer-bar');
-  const label = $('timer-elapsed');
-  const start = performance.now();
-  const limit = state.timeLimitMs;
+  clearInterval(ST.timer);
+  var fill  = el('bfill');
+  var elapEl = el('g-elapsed');
+  var start = performance.now();
+  var lim   = ST.timeLimitMs;
 
-  bar.style.width = '100%';
-  bar.classList.remove('urgent');
+  fill.style.width = '100%';
+  fill.classList.remove('danger');
 
-  state.timerInterval = setInterval(() => {
-    const elapsed = performance.now() - start;
-    const pct = Math.max(0, 1 - elapsed / limit);
-    bar.style.width = (pct * 100) + '%';
-    label.textContent = (elapsed / 1000).toFixed(1) + 's';
-    if (pct < .25) bar.classList.add('urgent'); else bar.classList.remove('urgent');
-    if (pct <= 0) {
-      clearInterval(state.timerInterval);
-      handleTimeout();
-    }
+  if(ST.mode === 'zen') { elapEl.textContent = '∞'; return; }
+
+  ST.timer = setInterval(function(){
+    var e = performance.now() - start;
+    var pct = Math.max(0, 1 - e/lim);
+    fill.style.width = (pct*100)+'%';
+    elapEl.textContent = (e/1000).toFixed(1)+'s';
+    if(pct < .25) fill.classList.add('danger');
+    if(pct <= 0) { clearInterval(ST.timer); onTimeout(); }
   }, 50);
 }
 
-function handleTimeout() {
-  if (state.locked) return;
-  state.locked = true;
-  // wrong — reveal correct
-  const grid = $('answer-grid');
-  const btns = grid.querySelectorAll('.ans-btn');
-  btns.forEach(btn => {
-    if (parseInt(btn.textContent) === state.currentAnswer) btn.classList.add('reveal');
-    btn.disabled = true;
-  });
-  wrongFeedback();
-  recordAnswer(false);
-  setTimeout(nextQuestion, 900);
+function onTimeout() {
+  if(ST.locked) return;
+  ST.locked = true;
+  var btns = el('ans-grid').querySelectorAll('.ans');
+  for(var i=0; i<btns.length; i++) {
+    btns[i].disabled = true;
+    if(Number(btns[i].querySelector('.ans-t').textContent) === ST.currentAnswer)
+      btns[i].classList.add('reveal');
+  }
+  wrongFX();
+  ST.total++;
+  var os = ST.opStats[ST.currentOp]; os.c++;
+  ST.combo=0; ST.streak=0;
+  el('g-streak').textContent=ST.streak; el('g-correct').textContent=ST.correct;
+  updateCombo();
+  if(ST.mode==='survival') {
+    ST.lives--;
+    renderLives();
+    if(ST.lives<=0) { setTimeout(endGame, 900); return; }
+  }
+  setTimeout(nextQ, 900);
 }
 
-// ─── ANSWER ──────────────────────────────────
-function handleAnswer(val, btn, choices, correct) {
-  if (state.locked) return;
-  state.locked = true;
-  clearInterval(state.timerInterval);
+function handleAns(val, btn, correct) {
+  if(ST.locked) return;
+  ST.locked = true;
+  clearInterval(ST.timer);
 
-  const elapsed = (performance.now() - state.questionStart) / 1000;
-  const isRight = val === correct;
+  var elapsed = (performance.now() - ST.qStart) / 1000;
+  var ok = (val === correct);
 
-  $('answer-grid').querySelectorAll('.ans-btn').forEach(b => {
-    b.disabled = true;
-    if (parseInt(b.textContent) === correct) b.classList.add(isRight ? 'correct' : 'reveal');
-  });
-
-  if (!isRight) btn.classList.add('wrong');
-
-  recordAnswer(isRight, elapsed);
-
-  if (isRight) {
-    correctFeedback(btn);
-    state.combo = Math.min(5, state.combo + 1);
-    state.streak++;
-    state.correct++;
-    state.bestStreak = Math.max(state.bestStreak, state.streak);
-    if (state.streak > 0 && state.streak % 5 === 0) showStreakPopup(state.streak);
-  } else {
-    wrongFeedback();
-    state.combo = 0;
-    state.streak = 0;
+  var btns = el('ans-grid').querySelectorAll('.ans');
+  for(var i=0;i<btns.length;i++) {
+    btns[i].disabled = true;
+    var v = Number(btns[i].querySelector('.ans-t').textContent);
+    if(v === correct) btns[i].classList.add(ok ? 'correct' : 'reveal');
   }
-  state.total++;
-  $('g-streak').textContent  = state.streak;
-  $('g-correct').textContent = state.correct;
-  updateComboDots();
+  if(!ok) btn.classList.add('wrong');
 
-  // Time stats
-  state.times.push(elapsed);
-  const os = state.opStats[state.currentOp];
+  ST.total++;
+  var os = ST.opStats[ST.currentOp];
   os.t += elapsed; os.c++;
+  ST.times.push(elapsed);
 
-  setTimeout(nextQuestion, isRight ? 500 : 800);
+  if(ok) {
+    ST.combo = Math.min(5, ST.combo+1);
+    ST.streak++; ST.correct++;
+    ST.bestStreak = Math.max(ST.bestStreak, ST.streak);
+    correctFX(btn);
+    floatScore(btn, '+'+scoreForAns(elapsed));
+    if(ST.streak>0 && ST.streak%5===0) streakPop(ST.streak);
+  } else {
+    ST.combo=0; ST.streak=0;
+    wrongFX();
+    if(ST.mode==='survival') {
+      ST.lives--; renderLives();
+      if(ST.lives<=0) { setTimeout(endGame, 900); return; }
+    }
+  }
+
+  el('g-streak').textContent  = ST.streak;
+  el('g-correct').textContent = ST.correct;
+  updateCombo();
+  setTimeout(nextQ, ok ? 500 : 850);
 }
 
-function recordAnswer(correct, elapsed) {}
-
-function correctFeedback(btn) {
-  const f = $('feedback-flash');
-  f.className = '';
-  void f.offsetWidth;
-  f.className = 'correct-flash';
-  spawnParticles(btn, '#39ff14');
+function scoreForAns(t) {
+  var speed = Math.max(0,(3-t)/3);
+  var combo = ST.combo>=5 ? 2 : ST.combo>=3 ? 1.5 : 1;
+  return Math.round(10 * combo * (1+speed));
 }
 
-function wrongFeedback() {
-  const f = $('feedback-flash');
-  f.className = '';
-  void f.offsetWidth;
-  f.className = 'wrong-flash';
-  vibrateDevice();
+// FX
+function correctFX(btn) {
+  var f=el('flash'); f.className=''; void f.offsetWidth; f.className='c';
+  spawnParticles(btn,'#00ff87');
+  try{if(navigator.vibrate) navigator.vibrate([15,10,15]);}catch(e){}
+}
+function wrongFX() {
+  var f=el('flash'); f.className=''; void f.offsetWidth; f.className='w';
+  try{if(navigator.vibrate) navigator.vibrate(90);}catch(e){}
 }
 
-function vibrateDevice() {
-  try { navigator.vibrate && navigator.vibrate(80); } catch {}
-}
-
-// ─── PARTICLES ───────────────────────────────
 function spawnParticles(ref, color) {
-  const rect = ref.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  const container = $('particles');
-  for (let i = 0; i < 10; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const angle = (Math.PI * 2 * i) / 10 + Math.random() * .5;
-    const dist = 40 + Math.random() * 60;
-    p.style.cssText = `
-      left:${cx}px; top:${cy}px;
-      background:${color};
-      --dx:${Math.cos(angle)*dist}px;
-      --dy:${Math.sin(angle)*dist}px;
-      box-shadow: 0 0 6px ${color};
-    `;
-    container.appendChild(p);
-    setTimeout(() => p.remove(), 800);
+  var r = ref.getBoundingClientRect();
+  var cx = r.left+r.width/2, cy = r.top+r.height/2;
+  var p = el('particles');
+  for(var i=0;i<12;i++) {
+    var d = document.createElement('div');
+    d.className = 'pfly';
+    var angle = (Math.PI*2*i/12) + Math.random()*.5;
+    var dist = 50 + Math.random()*65;
+    var sz = 4 + Math.random()*5;
+    d.style.cssText = 'left:'+cx+'px;top:'+cy+'px;width:'+sz+'px;height:'+sz+'px;'
+      +'background:'+color+';box-shadow:0 0 6px '+color+';'
+      +'--dx:'+(Math.cos(angle)*dist)+'px;--dy:'+(Math.sin(angle)*dist)+'px;';
+    p.appendChild(d);
+    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 700);
   }
 }
 
-// ─── COMBO DOTS ──────────────────────────────
-function updateComboDots() {
-  const dots = $('combo-dots').querySelectorAll('.combo-dot');
-  dots.forEach((d, i) => d.classList.toggle('lit', i < state.combo));
-  $('combo-mult').textContent = state.combo >= 5 ? '×2 🔥' : state.combo >= 3 ? '×1.5' : '';
+function floatScore(ref, txt) {
+  var r = ref.getBoundingClientRect();
+  var div = document.createElement('div');
+  div.className = 'sfloat';
+  div.textContent = txt;
+  div.style.left = (r.left+r.width/2-20)+'px';
+  div.style.top  = r.top+'px';
+  document.body.appendChild(div);
+  setTimeout(function(){ if(div.parentNode) div.parentNode.removeChild(div); }, 660);
 }
 
-// ─── STREAK POPUP ────────────────────────────
-function showStreakPopup(n) {
-  const el = document.createElement('div');
-  el.className = 'streak-popup';
-  el.textContent = `🔥 ${n} STREAK!`;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 750);
+function streakPop(n) {
+  var msgs = {5:'🔥 5 STREAK!',10:'💥 10 STREAK!',15:'⚡ 15 STREAK!',20:'🌟 20 STREAK!',25:'👑 25 STREAK!'};
+  var div = document.createElement('div');
+  div.className = 'spop';
+  div.textContent = msgs[n] || ('🔥 '+n+' STREAK!');
+  document.body.appendChild(div);
+  setTimeout(function(){ if(div.parentNode) div.parentNode.removeChild(div); }, 750);
 }
 
-// ─── QUIT ─────────────────────────────────────
-$('quit-btn').addEventListener('click', endGame);
+function updateCombo() {
+  var dots = el('cdots').querySelectorAll('.cd');
+  for(var i=0;i<dots.length;i++) dots[i].classList.toggle('on', i < ST.combo);
+  var cb = el('cbonus');
+  if(ST.combo>=5)      { cb.textContent='×2 🔥'; cb.classList.add('show'); }
+  else if(ST.combo>=3) { cb.textContent='×1.5'; cb.classList.add('show'); }
+  else                 { cb.classList.remove('show'); }
+}
+
+// END GAME
+el('quit-btn').addEventListener('click', function(){ clearInterval(ST.timer); endGame(); });
 
 function endGame() {
-  clearInterval(state.timerInterval);
-  hide('game');
+  clearInterval(ST.timer);
+  if(ST.mode==='survival' && ST.lives>0) ST.survived=true;
   showResult();
 }
 
-// ─── RESULT ───────────────────────────────────
+// RESULT
 function showResult() {
-  const wasRecord = state.bestStreak > GLOBAL.bestStreak;
+  var wasRecord = ST.bestStreak > G.bestStreak;
+  G.bestStreak  = Math.max(G.bestStreak, ST.bestStreak);
+  G.totalSolved += ST.correct;
 
-  // Update globals
-  if (wasRecord) GLOBAL.bestStreak = state.bestStreak;
-  GLOBAL.totalSolved += state.correct;
-  if (state.times.length) {
-    GLOBAL.avgTime  += state.times.reduce((a, b) => a + b, 0);
-    GLOBAL.avgCount += state.times.length;
+  var xpEarned = calcXP(ST);
+  G.xp += xpEarned;
+
+  if(ST.isDaily) {
+    G.dailyDone = new Date().toDateString();
+    S.set('dailyDone', G.dailyDone);
   }
-  STORE.set('bestStreak',  GLOBAL.bestStreak);
-  STORE.set('totalSolved', GLOBAL.totalSolved);
-  STORE.set('avgTime',     GLOBAL.avgTime);
-  STORE.set('avgCount',    GLOBAL.avgCount);
 
-  // Emoji / title
-  const pct = state.total ? state.correct / state.total : 0;
-  let icon = '💀', title = 'TRY AGAIN';
-  if (pct >= .9)      { icon = '🏆'; title = 'CHAMPION!'; }
-  else if (pct >= .7) { icon = '🌟'; title = 'GREAT RUN!'; }
-  else if (pct >= .5) { icon = '👍'; title = 'GOOD EFFORT'; }
+  S.set('bestStreak',  G.bestStreak);
+  S.set('totalSolved', G.totalSolved);
+  S.set('xp',          G.xp);
 
-  $('result-icon').textContent = icon;
-  $('result-title').textContent = title;
-  $('new-record').classList.toggle('show', wasRecord);
-  $('r-streak').textContent   = state.bestStreak;
-  $('r-correct').textContent  = state.correct;
-  $('r-accuracy').textContent = state.total ? Math.round(pct * 100) + '%' : '0%';
-  const avgT = state.times.length ? (state.times.reduce((a,b)=>a+b,0)/state.times.length).toFixed(1) : '—';
-  $('r-avgtime').textContent  = avgT + 's';
+  // Achievements
+  var newAch = [];
+  var chk = {
+    correct:ST.correct, total:ST.total, bestStreak:ST.bestStreak,
+    times:ST.times, mode:ST.mode, survived:ST.survived,
+    opStats:ST.opStats, globalCorrect:G.totalSolved
+  };
+  for(var i=0;i<ACHIEVEMENTS.length;i++) {
+    var a = ACHIEVEMENTS[i];
+    if(G.achievements.indexOf(a.id)===-1 && a.check(chk)) {
+      G.achievements.push(a.id); newAch.push(a);
+    }
+  }
+  S.set('achievements', G.achievements);
 
-  // Op breakdown
-  const ob = $('op-breakdown');
-  ob.innerHTML = '<div class="ob-title">BY OPERATION</div>';
-  const activeOps = state.ops.filter(op => state.opStats[op].t > 0 || state.opStats[op].c > 0);
-  const maxC = Math.max(1, ...activeOps.map(op => state.opStats[op].c));
-  activeOps.forEach(op => {
-    const s = state.opStats[op];
-    const pctBar = s.c ? Math.round((s.c / maxC) * 100) : 0;
-    const acc = s.c ? '✓' + s.c : '—';
-    ob.innerHTML += `
-      <div class="ob-row">
-        <span class="ob-op">${OP_EMOJIS[op]}</span>
-        <div class="ob-bar-bg"><div class="ob-bar" style="width:${pctBar}%"></div></div>
-        <span class="ob-pct">${acc}</span>
-      </div>`;
-  });
+  // Grade
+  var pct = ST.total ? ST.correct/ST.total : 0;
+  var trophy='💀', title='TRY AGAIN', grade='F';
+  if(pct>=.97)      { trophy='👑'; title='LEGENDARY!'; grade='S+'; }
+  else if(pct>=.9)  { trophy='🏆'; title='CHAMPION!';  grade='S';  }
+  else if(pct>=.8)  { trophy='🌟'; title='EXCELLENT!'; grade='A';  }
+  else if(pct>=.7)  { trophy='👍'; title='GREAT RUN!'; grade='B';  }
+  else if(pct>=.5)  { trophy='✌️'; title='GOOD EFFORT';grade='C';  }
+  if(ST.mode==='survival'&&ST.survived) { trophy='🛡️'; title='SURVIVED!'; grade='S'; }
 
-  show('result');
+  el('r-trophy').textContent = trophy;
+  el('r-title').textContent  = title;
+  el('r-grade').textContent  = grade;
+  el('r-record').classList.toggle('show', wasRecord);
+  el('r-streak').textContent  = ST.bestStreak;
+  el('r-correct').textContent = ST.correct;
+  el('r-acc').textContent     = ST.total ? Math.round(pct*100)+'%' : '0%';
+  var sum=0; for(var i=0;i<ST.times.length;i++) sum+=ST.times[i];
+  el('r-speed').textContent   = ST.times.length ? (sum/ST.times.length).toFixed(1)+'s' : '—';
+
+  // XP
+  var xpP = xpProgress(G.xp);
+  var ti   = xpTierIdx(G.xp);
+  el('xp-lvl-lbl').textContent = 'Level '+(ti+1)+' '+xpTitle(G.xp);
+  el('xp-nxt').textContent     = xpP.label;
+  el('xp-earned').textContent  = '+'+xpEarned+' XP earned'+(ST.isDaily?' (daily bonus)':'');
+  setTimeout(function(){ el('xp-fill').style.width = xpP.pct+'%'; }, 150);
+
+  // Achievements
+  var ar = el('ach-row');
+  ar.style.display = newAch.length ? 'flex' : 'none';
+  var achHTML = '';
+  for(var i=0;i<newAch.length;i++) {
+    achHTML += '<div class="ach" style="animation-delay:'+(i*.1)+'s">'
+      +'<span class="ach-icon">'+newAch[i].icon+'</span>'+newAch[i].name+'</div>';
+  }
+  ar.innerHTML = achHTML;
+
+  // Breakdown
+  var activeOps = [];
+  var opKeys = ['add','sub','mul','div','mod'];
+  for(var i=0;i<opKeys.length;i++) {
+    if(ST.ops.indexOf(opKeys[i])>-1 && ST.opStats[opKeys[i]].c>0) activeOps.push(opKeys[i]);
+  }
+  var maxC = 1;
+  for(var i=0;i<activeOps.length;i++) if(ST.opStats[activeOps[i]].c > maxC) maxC=ST.opStats[activeOps[i]].c;
+
+  var bdHTML = '';
+  if(activeOps.length) {
+    for(var i=0;i<activeOps.length;i++) {
+      var op  = activeOps[i];
+      var s   = ST.opStats[op];
+      var pBar = Math.round((s.c/maxC)*100);
+      bdHTML += '<div class="bdrow">'
+        +'<span class="bdicon">'+OP_EMOJI[op]+'</span>'
+        +'<span class="bdlbl">'+OP_LABEL[op]+'</span>'
+        +'<div class="bdtrack"><div class="bdfill" style="width:'+pBar+'%"></div></div>'
+        +'<span class="bdacc">'+s.c+'✓</span>'
+        +'</div>';
+    }
+  } else {
+    bdHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:8px 0">No data yet</div>';
+  }
+  el('bd-rows').innerHTML = bdHTML;
+
+  // LB update
+  for(var i=0;i<G.lb.length;i++) {
+    if(G.lb[i].isYou) G.lb[i].score = Math.max(G.lb[i].score||0, G.bestStreak*100+G.totalSolved);
+  }
+  S.set('lb', G.lb);
+
+  showScreen('result');
 }
 
-// ─── RESULT BUTTONS ──────────────────────────
-$('play-again-btn').addEventListener('click', () => { hide('result'); startGame(); });
-$('home-btn').addEventListener('click', () => { hide('result'); show('home'); initHome(); });
-$('play-btn').addEventListener('click', () => { if (state.ops.length) startGame(); });
+// SHARE
+el('r-share').addEventListener('click', function(){
+  var txt = '🧮 Math Saga — '+ST.correct+'/'+ST.total+' correct · '+ST.bestStreak+' streak! #MathSaga';
+  if(navigator.share) {
+    navigator.share({title:'Math Saga', text:txt, url:location.href}).catch(function(){});
+  } else if(navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function(){
+      el('r-share').textContent = '✓ Copied to clipboard!';
+      setTimeout(function(){ el('r-share').innerHTML='📤&nbsp; SHARE MY SCORE'; }, 2200);
+    });
+  }
+});
 
-// ─── INIT ────────────────────────────────────
-initHome();
+// BUTTON WIRING
+el('play-btn').addEventListener('click',  function(){ if(ST.ops.length) startGame(); });
+el('daily-btn').addEventListener('click', function(){ ST.isDaily=true; startGame(); });
+el('r-again').addEventListener('click',   function(){ ST.isDaily=false; startGame(); });
+el('r-home').addEventListener('click',    function(){ ST.isDaily=false; showScreen('home'); initHome(); });
 </script>
 
-<!-- ─── SERVICE WORKER REGISTRATION ─────── -->
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
 </script>
-
 </body>
 </html>
