@@ -1,7 +1,7 @@
 {
   "name": "Math Saga Game for kids",
   "short_name": "Math Saga",
-  "description": "Math Saga – The ultimate arithmetic adventure game for kids. Addition, subtraction, multiplication, division and modulus — race the clock, build streaks, master numbers.",
+  "description": "Math Saga – The ultimate arithmetic adventure game for kids. Addition, subtraction, multiplication, division and modulus - race the clock, build streaks, master numbers.",
   "start_url": "/math-saga-game-for-kids/",
   "display": "standalone",
   "orientation": "portrait",
