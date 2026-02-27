@@ -1,16 +1,15 @@
-// Math Saga Premium — Service Worker v1.0
-const CACHE = 'mathsaga-v1';
+// NumBolt — Service Worker v2.0
+const CACHE = 'numbolt-v2';
 const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
+  'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap',
 ];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => {
-      return c.addAll(ASSETS).catch(() => {});
-    })
+    caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {}))
   );
   self.skipWaiting();
 });
@@ -25,7 +24,6 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Network-first for navigation, cache-first for assets
   if (e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request)
