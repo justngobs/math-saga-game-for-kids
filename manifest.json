@@ -2,7 +2,7 @@
   "name": "Math Saga - Premium Math Game",
   "short_name": "Math Saga",
   "description": "The most advanced arithmetic training game. 4 modes, 10 levels, XP system, achievements. Beat your streak, master numbers.",
-  "start_url": "/",
+  "start_url": "/math-saga-game-for-kids/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#070710",
