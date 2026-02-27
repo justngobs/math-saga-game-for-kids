@@ -20,6 +20,7 @@
   --text:#f0f0ff; --text-mid:#a0a0c0; --text-dim:#505075;
   --fd:'Syne',sans-serif; --fm:'Syne Mono',monospace; --fb:'Space Grotesk',sans-serif;
   --r:16px; --rlg:24px; --rxl:32px;
+  --topbar-h: 56px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;width:100%;background:var(--ink);color:var(--text);
@@ -34,31 +35,60 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
                    linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);
   background-size:60px 60px}
 
+/* ── FIXED TOP BAR (home only) ── */
+#home-topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  background: rgba(7,7,16,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+#home-topbar.hidden-bar { display: none; }
+.topbar-title {
+  font-family: var(--fd);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff 0%, var(--cyan) 55%, var(--violet) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* SCREENS — only .active is shown */
 .screen{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;z-index:10}
 .screen.active{display:flex}
 #home,#result{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;justify-content:flex-start}
 #home::-webkit-scrollbar,#result::-webkit-scrollbar{display:none}
 
-/* HOME */
-.home-inner{width:100%;max-width:440px;padding:0 20px 48px;display:flex;flex-direction:column;align-items:center;min-height:100%}
-.hero{width:100%;padding:52px 0 28px;display:flex;flex-direction:column;align-items:center;position:relative}
-.hero-glow{position:absolute;width:300px;height:300px;border-radius:50%;top:-60px;left:50%;
+/* HOME — pad top for fixed bar */
+.home-inner{
+  width:100%;max-width:440px;
+  padding: calc(var(--topbar-h) + 8px) 20px 48px;
+  display:flex;flex-direction:column;align-items:center;min-height:100%
+}
+
+/* hero — remove the big logo title area, keep the glow mark smaller */
+.hero{width:100%;padding:24px 0 20px;display:flex;flex-direction:column;align-items:center;position:relative}
+.hero-glow{position:absolute;width:200px;height:200px;border-radius:50%;top:-30px;left:50%;
   transform:translateX(-50%);pointer-events:none;
-  background:radial-gradient(circle,rgba(124,58,255,.16) 0%,transparent 70%)}
-.logo-mark{width:80px;height:80px;border-radius:22px;
+  background:radial-gradient(circle,rgba(124,58,255,.14) 0%,transparent 70%)}
+.logo-mark{width:64px;height:64px;border-radius:18px;
   background:linear-gradient(135deg,var(--violet),var(--cyan));
   display:flex;align-items:center;justify-content:center;
-  font-size:38px;margin-bottom:18px;position:relative;z-index:1;
-  box-shadow:0 0 40px rgba(124,58,255,.4),0 20px 40px rgba(0,0,0,.35);
+  font-size:30px;margin-bottom:10px;position:relative;z-index:1;
+  box-shadow:0 0 30px rgba(124,58,255,.4),0 16px 32px rgba(0,0,0,.35);
   animation:float 4s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
-.logo-title{font-family:var(--fd);font-size:clamp(38px,11vw,56px);font-weight:800;
-  letter-spacing:-1px;line-height:1;position:relative;z-index:1;
-  background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,var(--violet) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.logo-tag{font-size:11px;letter-spacing:5px;color:var(--text-dim);text-transform:uppercase;
-  margin-top:6px;font-weight:500;position:relative;z-index:1}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.logo-tag{font-size:10px;letter-spacing:5px;color:var(--text-dim);text-transform:uppercase;
+  margin-top:2px;font-weight:500;position:relative;z-index:1}
 
 .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-bottom:24px}
 .sc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
@@ -256,7 +286,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   letter-spacing:2px;background:linear-gradient(135deg,var(--violet),var(--cyan));color:#fff;
   box-shadow:0 0 30px rgba(124,58,255,.3);transition:transform .15s}
 .ragain:active{transform:scale(.97)}
-.rhomebtn{flex:1;padding:18px;border-radius:var(--rxl);font-family:var(--fd);font-size:18px;font-weight:700;
+/* FIX: home button bigger */
+.rhomebtn{flex:1;padding:18px;border-radius:var(--rxl);font-family:var(--fd);font-size:26px;font-weight:700;
   border:1.5px solid var(--border-md);background:var(--card);color:var(--text);transition:all .15s}
 .rhomebtn:active{transform:scale(.97);border-color:var(--violet)}
 .rshare{width:100%;padding:14px;border-radius:var(--rlg);font-family:var(--fd);font-size:13px;font-weight:700;
@@ -306,8 +337,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 @media(max-height:680px){
   .question{font-size:clamp(34px,10vw,52px)}
   .ans{height:66px;font-size:23px}
-  .hero{padding:30px 0 16px}
-  .logo-mark{width:64px;height:64px;font-size:30px}
+  .hero{padding:16px 0 12px}
+  .logo-mark{width:52px;height:52px;font-size:24px}
 }
 </style>
 </head>
@@ -315,6 +346,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 <div id="flash"></div>
 <div id="particles"></div>
+
+<!-- FIXED TOP BAR — always visible on home -->
+<div id="home-topbar" class="hidden-bar">
+  <div class="topbar-title">MATH SAGA</div>
+</div>
 
 <!-- ONBOARDING -->
 <div id="onboard">
@@ -350,7 +386,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="hero">
       <div class="hero-glow"></div>
       <div class="logo-mark">∞</div>
-      <div class="logo-title">MATH SAGA</div>
       <div class="logo-tag">Master · Compete · Conquer</div>
     </div>
 
@@ -393,11 +428,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
     <div class="sect"><div class="sect-line"></div><div class="sect-lbl">Operations</div><div class="sect-line"></div></div>
     <div class="ops-row" id="ops-row">
-      <button class="ot on" data-op="add">+</button>
-      <button class="ot on" data-op="sub">−</button>
-      <button class="ot on" data-op="mul">×</button>
-      <button class="ot on" data-op="div">÷</button>
-      <button class="ot on" data-op="mod">%</button>
+      <button class="ot" data-op="add">+</button>
+      <button class="ot" data-op="sub">−</button>
+      <button class="ot" data-op="mul">×</button>
+      <button class="ot" data-op="div">÷</button>
+      <button class="ot" data-op="mod">%</button>
     </div>
 
     <button class="cta" id="play-btn">▶  PLAY NOW</button>
@@ -483,10 +518,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 <script>
 /* ═══════════════════════════════════════════════
-   MATH SAGA — ENGINE v3 (full clean rewrite)
+   MATH SAGA — ENGINE v3.1
+   Fixes:
+   - Op toggle listeners wired ONCE at boot, never inside initHome()
+   - Mode card listeners wired ONCE at boot
+   - Diff button listeners wired ONCE at boot (diff-grid rebuilt only for .sel class)
+   - Fixed top bar shown/hidden on home
+   - Home icon font size increased
 ═══════════════════════════════════════════════ */
 
-// STORAGE
 var S = {
   get: function(k, d) {
     try { var v = localStorage.getItem('ms3_' + k); return v !== null ? JSON.parse(v) : d; }
@@ -497,24 +537,18 @@ var S = {
   }
 };
 
-// CONSTANTS
-var OP_NAME  = {add:'ADDITION',   sub:'SUBTRACTION', mul:'MULTIPLY',  div:'DIVISION', mod:'MODULUS'};
-var OP_CHAR  = {add:'+',          sub:'−',           mul:'×',         div:'÷',        mod:'%'};
-var OP_EMOJI = {add:'➕',         sub:'➖',          mul:'✖️',        div:'➗',       mod:'🔢'};
-var OP_LABEL = {add:'Addition',   sub:'Subtraction',  mul:'Multiply',  div:'Division', mod:'Modulus'};
+var OP_NAME  = {add:'ADDITION', sub:'SUBTRACTION', mul:'MULTIPLY', div:'DIVISION', mod:'MODULUS'};
+var OP_CHAR  = {add:'+', sub:'−', mul:'×', div:'÷', mod:'%'};
+var OP_EMOJI = {add:'➕', sub:'➖', mul:'✖️', div:'➗', mod:'🔢'};
+var OP_LABEL = {add:'Addition', sub:'Subtraction', mul:'Multiply', div:'Division', mod:'Modulus'};
 var MODE_LABEL = {classic:'⚡ CLASSIC', zen:'🌊 ZEN', blitz:'💥 BLITZ', survival:'💀 SURVIVAL'};
 
 var XP_TIERS = [
-  {xp:0,    title:'Apprentice'},
-  {xp:200,  title:'Scholar'},
-  {xp:500,  title:'Calculator'},
-  {xp:1000, title:'Solver'},
-  {xp:2000, title:'Genius'},
-  {xp:4000, title:'Wizard'},
-  {xp:7500, title:'Master'},
-  {xp:12000,title:'Legend'},
-  {xp:20000,title:'Champion'},
-  {xp:35000,title:'Mythic'}
+  {xp:0,    title:'Apprentice'},  {xp:200,  title:'Scholar'},
+  {xp:500,  title:'Calculator'},  {xp:1000, title:'Solver'},
+  {xp:2000, title:'Genius'},      {xp:4000, title:'Wizard'},
+  {xp:7500, title:'Master'},      {xp:12000,title:'Legend'},
+  {xp:20000,title:'Champion'},    {xp:35000,title:'Mythic'}
 ];
 
 var ACHIEVEMENTS = [
@@ -524,26 +558,25 @@ var ACHIEVEMENTS = [
   {id:'s20',    icon:'⚡', name:'Lightning',    check: function(st){return st.bestStreak>=20}},
   {id:'perf10', icon:'💎', name:'Perfect 10',   check: function(st){return st.total>=10 && st.correct===st.total}},
   {id:'speed',  icon:'🚀', name:'Speed Demon',  check: function(st){
-    if(!st.times || !st.times.length) return false;
-    var sum=0; for(var i=0;i<st.times.length;i++) sum+=st.times[i];
-    return (sum/st.times.length)<2;
+    if(!st.times||!st.times.length) return false;
+    var s=0; for(var i=0;i<st.times.length;i++) s+=st.times[i];
+    return (s/st.times.length)<2;
   }},
   {id:'cent',   icon:'💯', name:'Centurion',    check: function(st){return st.globalCorrect>=100}},
   {id:'allops', icon:'🔮', name:'All-Rounder',  check: function(st){
     return ['add','sub','mul','div','mod'].every(function(op){return st.opStats[op].c>0});
   }},
-  {id:'blitzm', icon:'🌀', name:'Blitz Master', check: function(st){return st.mode==='blitz' && st.total>=5}},
-  {id:'surv',   icon:'🛡️', name:'Survivor',     check: function(st){return st.mode==='survival' && st.survived}},
+  {id:'blitzm', icon:'🌀', name:'Blitz Master', check: function(st){return st.mode==='blitz'&&st.total>=5}},
+  {id:'surv',   icon:'🛡️', name:'Survivor',    check: function(st){return st.mode==='survival'&&st.survived}},
 ];
 
-// GLOBAL PERSISTENT STATE
 var G = {
-  bestStreak:  S.get('bestStreak', 0),
-  totalSolved: S.get('totalSolved', 0),
-  xp:          S.get('xp', 0),
-  achievements:S.get('achievements', []),
-  dailyDone:   S.get('dailyDone', ''),
-  lb:          S.get('lb', [
+  bestStreak:   S.get('bestStreak', 0),
+  totalSolved:  S.get('totalSolved', 0),
+  xp:           S.get('xp', 0),
+  achievements: S.get('achievements', []),
+  dailyDone:    S.get('dailyDone', ''),
+  lb:           S.get('lb', [
     {name:'AceCalc',   score:9840},
     {name:'MathWiz',   score:8720},
     {name:'NumbNinja', score:7550},
@@ -551,7 +584,6 @@ var G = {
   ])
 };
 
-// SESSION STATE
 var ST = {
   level:1, mode:'classic', ops:['add','sub','mul','div','mod'],
   streak:0, bestStreak:0, correct:0, total:0, combo:0,
@@ -561,110 +593,138 @@ var ST = {
   timer:null, timeLimitMs:0, locked:false
 };
 
-// HELPERS
 function el(id) { return document.getElementById(id); }
-function rand(a, b) { return Math.floor(Math.random()*(b-a+1))+a; }
+function rand(a,b) { return Math.floor(Math.random()*(b-a+1))+a; }
 
 function showScreen(id) {
   var screens = document.querySelectorAll('.screen');
-  for(var i=0; i<screens.length; i++) screens[i].classList.remove('active');
+  for(var i=0;i<screens.length;i++) screens[i].classList.remove('active');
   el(id).classList.add('active');
+  // Show/hide the fixed top bar — only on home
+  var bar = el('home-topbar');
+  if(id==='home') bar.classList.remove('hidden-bar');
+  else            bar.classList.add('hidden-bar');
 }
 
 function shuffle(arr) {
-  var a = arr.slice();
-  for(var i=a.length-1; i>0; i--) {
-    var j = Math.floor(Math.random()*(i+1));
-    var tmp=a[i]; a[i]=a[j]; a[j]=tmp;
-  }
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
   return a;
 }
 
-function timeLimit(lvl, mode) {
+function timeLimit(lvl,mode) {
   if(mode==='zen')   return 999999;
   if(mode==='blitz') return 3000;
-  return Math.max(5000, 12000 - lvl*700);
+  return Math.max(5000,12000-lvl*700);
 }
 
-// XP
 function xpTierIdx(xp) {
   var i=0;
-  for(var t=XP_TIERS.length-1; t>=0; t--) {
-    if(xp >= XP_TIERS[t].xp) { i=t; break; }
-  }
+  for(var t=XP_TIERS.length-1;t>=0;t--){if(xp>=XP_TIERS[t].xp){i=t;break;}}
   return i;
 }
-function xpTitle(xp) { return XP_TIERS[xpTierIdx(xp)].title; }
+function xpTitle(xp){return XP_TIERS[xpTierIdx(xp)].title;}
 function xpProgress(xp) {
-  var i = xpTierIdx(xp);
-  var cur = XP_TIERS[i];
-  var nxt = XP_TIERS[i+1];
-  if(!nxt) return {pct:100, label:'MAX LEVEL'};
-  var pct = ((xp-cur.xp)/(nxt.xp-cur.xp))*100;
-  return {pct: Math.min(100,pct), label: (xp-cur.xp)+' / '+(nxt.xp-cur.xp)+' XP'};
+  var i=xpTierIdx(xp), cur=XP_TIERS[i], nxt=XP_TIERS[i+1];
+  if(!nxt) return{pct:100,label:'MAX LEVEL'};
+  return{pct:Math.min(100,((xp-cur.xp)/(nxt.xp-cur.xp))*100), label:(xp-cur.xp)+' / '+(nxt.xp-cur.xp)+' XP'};
 }
 function calcXP(st) {
-  var xp = st.correct*10 + st.bestStreak*5;
-  if(st.mode==='blitz')   xp = Math.floor(xp*2);
-  if(st.mode==='survival' && st.survived) xp += 100;
-  if(st.isDaily) xp += 50;
-  var acc = st.total ? st.correct/st.total : 0;
+  var xp=st.correct*10+st.bestStreak*5;
+  if(st.mode==='blitz')            xp=Math.floor(xp*2);
+  if(st.mode==='survival'&&st.survived) xp+=100;
+  if(st.isDaily) xp+=50;
+  var acc=st.total?st.correct/st.total:0;
   if(acc>=1) xp+=30; else if(acc>=.9) xp+=15;
   return Math.floor(xp);
 }
 
-// QUESTION GENERATION
-function genQ(op, lvl) {
-  var s=lvl, a, b, ans;
-  if(op==='add') { a=rand(1,10*s); b=rand(1,10*s); ans=a+b; }
-  else if(op==='sub') { b=rand(1,10*s); ans=rand(0,10*s); a=ans+b; }
-  else if(op==='mul') { a=rand(1,Math.max(2,5*s)); b=rand(1,Math.max(2,5*s)); ans=a*b; }
-  else if(op==='div') { b=rand(1,Math.max(2,5*s)); ans=rand(1,Math.max(2,5*s)); a=ans*b; }
-  else { b=rand(2,Math.max(3,5*s)); ans=rand(0,b-1); a=rand(1,8*s)*b+ans; }
-  return {a:a, b:b, ans:ans, op:op};
+function genQ(op,lvl) {
+  var s=lvl,a,b,ans;
+  if(op==='add'){a=rand(1,10*s);b=rand(1,10*s);ans=a+b;}
+  else if(op==='sub'){b=rand(1,10*s);ans=rand(0,10*s);a=ans+b;}
+  else if(op==='mul'){a=rand(1,Math.max(2,5*s));b=rand(1,Math.max(2,5*s));ans=a*b;}
+  else if(op==='div'){b=rand(1,Math.max(2,5*s));ans=rand(1,Math.max(2,5*s));a=ans*b;}
+  else{b=rand(2,Math.max(3,5*s));ans=rand(0,b-1);a=rand(1,8*s)*b+ans;}
+  return{a:a,b:b,ans:ans,op:op};
 }
 
 function genChoices(ans) {
-  var set = [ans];
-  var i = 0;
-  while(set.length < 4 && i++ < 80) {
-    var d = rand(1, Math.max(5, Math.ceil(Math.abs(ans)*.4)+3));
-    var w = ans + (Math.random()<.5 ? 1 : -1)*d;
-    if(w !== ans && set.indexOf(w)===-1) set.push(w);
+  var set=[ans],i=0;
+  while(set.length<4&&i++<80){
+    var d=rand(1,Math.max(5,Math.ceil(Math.abs(ans)*.4)+3));
+    var w=ans+(Math.random()<.5?1:-1)*d;
+    if(w!==ans&&set.indexOf(w)===-1) set.push(w);
   }
   var e=1;
-  while(set.length < 4) { if(set.indexOf(ans+e)===-1) set.push(ans+e); e++; }
+  while(set.length<4){if(set.indexOf(ans+e)===-1)set.push(ans+e);e++;}
   return shuffle(set);
 }
 
-// ONBOARDING
-var obStep = 0;
+/* ─────────────────────────────────────────────
+   ONE-TIME WIRING — called once at boot.
+   initHome() only updates display values,
+   never re-attaches listeners.
+───────────────────────────────────────────── */
+function wireHomeControls() {
 
-function obNext() {
-  el('ob'+obStep).classList.remove('active');
-  obStep = Math.min(2, obStep+1);
-  el('ob'+obStep).classList.add('active');
+  // ── OPERATION TOGGLES ──
+  // Sync visual state to ST.ops, then wire click once
+  var ots = document.querySelectorAll('.ot');
+  for(var o=0;o<ots.length;o++) {
+    (function(btn) {
+      // set initial visual state
+      if(ST.ops.indexOf(btn.dataset.op) > -1) btn.classList.add('on');
+      else btn.classList.remove('on');
+
+      btn.addEventListener('click', function(){
+        var op = btn.dataset.op;
+        var idx = ST.ops.indexOf(op);
+        if(idx > -1) {
+          if(ST.ops.length > 1) {
+            ST.ops.splice(idx, 1);
+            btn.classList.remove('on');
+          }
+        } else {
+          ST.ops.push(op);
+          btn.classList.add('on');
+        }
+      });
+    })(ots[o]);
+  }
+
+  // ── MODE CARDS ──
+  var mcs = document.querySelectorAll('.mc');
+  for(var m=0;m<mcs.length;m++) {
+    (function(card) {
+      card.addEventListener('click', function(){
+        ST.mode = card.dataset.mode;
+        for(var x=0;x<mcs.length;x++) mcs[x].classList.remove('sel');
+        card.classList.add('sel');
+      });
+    })(mcs[m]);
+  }
+
+  // ── DIFFICULTY BUTTONS — built once, listeners wired once ──
+  var dg = el('diff-grid');
+  dg.innerHTML = '';
+  for(var i=1;i<=10;i++) {
+    (function(lvl) {
+      var b = document.createElement('button');
+      b.className = 'db' + (lvl===ST.level?' sel':'');
+      b.innerHTML = '<span>'+lvl+'</span><span class="dbar"></span>';
+      b.addEventListener('click', function(){
+        ST.level = lvl;
+        var btns = dg.querySelectorAll('.db');
+        for(var j=0;j<btns.length;j++) btns[j].classList.remove('sel');
+        b.classList.add('sel');
+      });
+      dg.appendChild(b);
+    })(i);
+  }
 }
 
-function obFinish() {
-  el('onboard').classList.add('gone');
-  S.set('onboarded', true);
-  showScreen('home');
-  initHome();
-}
-
-el('obn0').addEventListener('click', obNext);
-el('obn1').addEventListener('click', obNext);
-el('obn2').addEventListener('click', obFinish);
-el('obskip').addEventListener('click', obFinish);
-
-if(S.get('onboarded', false)) {
-  el('onboard').classList.add('gone');
-  showScreen('home');
-  initHome();
-}
-
-// HOME
+/* initHome — only refreshes data display, no listener wiring */
 function initHome() {
   el('h-best').textContent   = G.bestStreak;
   el('h-solved').textContent = G.totalSolved;
@@ -679,75 +739,54 @@ function initHome() {
     el('daily-sub').style.color = '';
   }
 
-  // Diff buttons
-  var dg = el('diff-grid');
-  dg.innerHTML = '';
-  for(var i=1; i<=10; i++) {
-    (function(lvl){
-      var b = document.createElement('button');
-      b.className = 'db' + (lvl===ST.level ? ' sel' : '');
-      b.innerHTML = '<span>'+lvl+'</span><span class="dbar"></span>';
-      b.addEventListener('click', function(){
-        ST.level = lvl;
-        var btns = dg.querySelectorAll('.db');
-        for(var j=0;j<btns.length;j++) btns[j].classList.remove('sel');
-        b.classList.add('sel');
-      });
-      dg.appendChild(b);
-    })(i);
-  }
-
-  // Mode cards
-  var mcs = document.querySelectorAll('.mc');
-  for(var m=0; m<mcs.length; m++) {
-    (function(card){
-      card.classList.toggle('sel', card.dataset.mode === ST.mode);
-      card.addEventListener('click', function(){
-        ST.mode = card.dataset.mode;
-        for(var x=0;x<mcs.length;x++) mcs[x].classList.remove('sel');
-        card.classList.add('sel');
-      });
-    })(mcs[m]);
-  }
-
-  // Op toggles
-  var ots = document.querySelectorAll('.ot');
-  for(var o=0; o<ots.length; o++) {
-    (function(btn){
-      btn.classList.toggle('on', ST.ops.indexOf(btn.dataset.op) > -1);
-      btn.addEventListener('click', function(){
-        var op = btn.dataset.op;
-        var idx = ST.ops.indexOf(op);
-        if(idx > -1) {
-          if(ST.ops.length > 1) { ST.ops.splice(idx,1); btn.classList.remove('on'); }
-        } else {
-          ST.ops.push(op); btn.classList.add('on');
-        }
-      });
-    })(ots[o]);
-  }
-
   renderLB();
 }
 
 function renderLB() {
   var sorted = G.lb.slice();
   for(var i=0;i<sorted.length;i++) {
-    if(sorted[i].isYou) sorted[i].score = G.bestStreak*100 + G.totalSolved;
+    if(sorted[i].isYou) sorted[i].score = G.bestStreak*100+G.totalSolved;
   }
-  sorted.sort(function(a,b){return b.score-a.score});
-  var medals = ['🥇','🥈','🥉'];
-  var html = '';
-  var limit = Math.min(4, sorted.length);
+  sorted.sort(function(a,b){return b.score-a.score;});
+  var medals=['🥇','🥈','🥉'], html='', limit=Math.min(4,sorted.length);
   for(var i=0;i<limit;i++) {
-    var r = sorted[i];
+    var r=sorted[i];
     html += '<div class="lb-row">'
-      + '<div class="lb-rank'+(i===0?' g':'')+'">'+(medals[i]||('#'+(i+1)))+'</div>'
-      + '<div class="lb-name"'+(r.isYou?' style="color:var(--cyan)"':'')+'>'+r.name+(r.isYou?' (You)':'')+'</div>'
-      + '<div class="lb-score">'+r.score.toLocaleString()+'</div>'
-      + '</div>';
+      +'<div class="lb-rank'+(i===0?' g':'')+'">'+(medals[i]||('#'+(i+1)))+'</div>'
+      +'<div class="lb-name"'+(r.isYou?' style="color:var(--cyan)"':'')+'>'+r.name+(r.isYou?' (You)':'')+'</div>'
+      +'<div class="lb-score">'+r.score.toLocaleString()+'</div>'
+      +'</div>';
   }
   el('lb-rows').innerHTML = html;
+}
+
+// ONBOARDING
+var obStep = 0;
+function obNext() {
+  el('ob'+obStep).classList.remove('active');
+  obStep = Math.min(2,obStep+1);
+  el('ob'+obStep).classList.add('active');
+}
+function obFinish() {
+  el('onboard').classList.add('gone');
+  S.set('onboarded', true);
+  showScreen('home');
+  initHome();
+}
+
+el('obn0').addEventListener('click', obNext);
+el('obn1').addEventListener('click', obNext);
+el('obn2').addEventListener('click', obFinish);
+el('obskip').addEventListener('click', obFinish);
+
+// Wire all home controls once at boot
+wireHomeControls();
+
+// If already onboarded, skip straight to home
+if(S.get('onboarded', false)) {
+  el('onboard').classList.add('gone');
+  showScreen('home');
+  initHome();
 }
 
 // GAME
@@ -755,15 +794,15 @@ function startGame() {
   if(!ST.ops.length) return;
   ST.streak=0; ST.bestStreak=0; ST.correct=0; ST.total=0;
   ST.combo=0; ST.times=[]; ST.lives=3; ST.survived=false; ST.qCount=0;
-  ST.opStats = {add:{c:0,t:0},sub:{c:0,t:0},mul:{c:0,t:0},div:{c:0,t:0},mod:{c:0,t:0}};
+  ST.opStats={add:{c:0,t:0},sub:{c:0,t:0},mul:{c:0,t:0},div:{c:0,t:0},mod:{c:0,t:0}};
   ST.timeLimitMs = timeLimit(ST.level, ST.mode);
 
   el('g-lvl').textContent     = ST.level;
   el('mode-pill').textContent = MODE_LABEL[ST.mode];
-  el('g-limit').textContent   = ST.mode==='zen' ? '∞' : (ST.timeLimitMs/1000).toFixed(0)+'s';
+  el('g-limit').textContent   = ST.mode==='zen'?'∞':(ST.timeLimitMs/1000).toFixed(0)+'s';
 
   var lr = el('lives-row');
-  lr.style.display = ST.mode==='survival' ? 'block' : 'none';
+  lr.style.display = ST.mode==='survival'?'block':'none';
   renderLives();
 
   showScreen('game');
@@ -772,337 +811,272 @@ function startGame() {
 
 function renderLives() {
   var s='';
-  for(var i=0;i<3;i++) s += (i < ST.lives ? '❤️' : '🖤');
-  el('lives-disp').textContent = s;
+  for(var i=0;i<3;i++) s+=(i<ST.lives?'❤️':'🖤');
+  el('lives-disp').textContent=s;
 }
 
 function nextQ() {
-  if(ST.isDaily && ST.qCount >= 20) { endGame(); return; }
-  ST.locked = false;
+  if(ST.isDaily && ST.qCount>=20){endGame();return;}
+  ST.locked=false;
   ST.qCount++;
-  var op = ST.ops[Math.floor(Math.random()*ST.ops.length)];
-  var q = genQ(op, ST.level);
-  ST.currentOp = op;
-  ST.currentAnswer = q.ans;
-  ST.qStart = performance.now();
+  var op=ST.ops[Math.floor(Math.random()*ST.ops.length)];
+  var q=genQ(op,ST.level);
+  ST.currentOp=op; ST.currentAnswer=q.ans; ST.qStart=performance.now();
 
-  el('op-name').textContent = OP_NAME[op];
-  el('q-num').textContent   = ST.qCount;
-  el('question').innerHTML  =
+  el('op-name').textContent=OP_NAME[op];
+  el('q-num').textContent=ST.qCount;
+  el('question').innerHTML=
     q.a+' <span class="qop">'+OP_CHAR[op]+'</span> '+q.b+' <span class="qeq">=</span> <span class="qslot">?</span>';
 
-  var choices = genChoices(q.ans);
-  var ag = el('ans-grid');
-  ag.innerHTML = '';
-  var palettes = [
+  var choices=genChoices(q.ans);
+  var ag=el('ans-grid'); ag.innerHTML='';
+  var palettes=[
     ['var(--violet)','var(--cyan)'],
     ['var(--magenta)','var(--violet)'],
     ['var(--cyan)','var(--lime)'],
     ['var(--gold)','var(--coral)']
   ];
-  for(var i=0; i<choices.length; i++) {
-    (function(val, idx){
-      var b = document.createElement('button');
-      b.className = 'ans';
-      b.style.cssText = '--ac1:'+palettes[idx][0]+';--ac2:'+palettes[idx][1];
-      b.innerHTML = '<span class="ans-t">'+val+'</span>';
-      b.addEventListener('click', function(){ handleAns(val, b, q.ans); });
+  for(var i=0;i<choices.length;i++) {
+    (function(val,idx){
+      var b=document.createElement('button');
+      b.className='ans';
+      b.style.cssText='--ac1:'+palettes[idx][0]+';--ac2:'+palettes[idx][1];
+      b.innerHTML='<span class="ans-t">'+val+'</span>';
+      b.addEventListener('click',function(){handleAns(val,b,q.ans);});
       ag.appendChild(b);
-    })(choices[i], i);
+    })(choices[i],i);
   }
 
-  el('g-streak').textContent  = ST.streak;
-  el('g-correct').textContent = ST.correct;
+  el('g-streak').textContent=ST.streak;
+  el('g-correct').textContent=ST.correct;
   updateCombo();
   startTimer();
 }
 
 function startTimer() {
   clearInterval(ST.timer);
-  var fill  = el('bfill');
-  var elapEl = el('g-elapsed');
-  var start = performance.now();
-  var lim   = ST.timeLimitMs;
-
-  fill.style.width = '100%';
-  fill.classList.remove('danger');
-
-  if(ST.mode === 'zen') { elapEl.textContent = '∞'; return; }
-
-  ST.timer = setInterval(function(){
-    var e = performance.now() - start;
-    var pct = Math.max(0, 1 - e/lim);
-    fill.style.width = (pct*100)+'%';
-    elapEl.textContent = (e/1000).toFixed(1)+'s';
-    if(pct < .25) fill.classList.add('danger');
-    if(pct <= 0) { clearInterval(ST.timer); onTimeout(); }
-  }, 50);
+  var fill=el('bfill'), elapEl=el('g-elapsed');
+  var start=performance.now(), lim=ST.timeLimitMs;
+  fill.style.width='100%'; fill.classList.remove('danger');
+  if(ST.mode==='zen'){elapEl.textContent='∞';return;}
+  ST.timer=setInterval(function(){
+    var e=performance.now()-start, pct=Math.max(0,1-e/lim);
+    fill.style.width=(pct*100)+'%';
+    elapEl.textContent=(e/1000).toFixed(1)+'s';
+    if(pct<.25) fill.classList.add('danger');
+    if(pct<=0){clearInterval(ST.timer);onTimeout();}
+  },50);
 }
 
 function onTimeout() {
   if(ST.locked) return;
-  ST.locked = true;
-  var btns = el('ans-grid').querySelectorAll('.ans');
-  for(var i=0; i<btns.length; i++) {
-    btns[i].disabled = true;
-    if(Number(btns[i].querySelector('.ans-t').textContent) === ST.currentAnswer)
+  ST.locked=true;
+  var btns=el('ans-grid').querySelectorAll('.ans');
+  for(var i=0;i<btns.length;i++){
+    btns[i].disabled=true;
+    if(Number(btns[i].querySelector('.ans-t').textContent)===ST.currentAnswer)
       btns[i].classList.add('reveal');
   }
   wrongFX();
   ST.total++;
-  var os = ST.opStats[ST.currentOp]; os.c++;
+  var os=ST.opStats[ST.currentOp]; os.c++;
   ST.combo=0; ST.streak=0;
   el('g-streak').textContent=ST.streak; el('g-correct').textContent=ST.correct;
   updateCombo();
-  if(ST.mode==='survival') {
-    ST.lives--;
-    renderLives();
-    if(ST.lives<=0) { setTimeout(endGame, 900); return; }
+  if(ST.mode==='survival'){
+    ST.lives--; renderLives();
+    if(ST.lives<=0){setTimeout(endGame,900);return;}
   }
-  setTimeout(nextQ, 900);
+  setTimeout(nextQ,900);
 }
 
-function handleAns(val, btn, correct) {
+function handleAns(val,btn,correct) {
   if(ST.locked) return;
-  ST.locked = true;
+  ST.locked=true;
   clearInterval(ST.timer);
-
-  var elapsed = (performance.now() - ST.qStart) / 1000;
-  var ok = (val === correct);
-
-  var btns = el('ans-grid').querySelectorAll('.ans');
-  for(var i=0;i<btns.length;i++) {
-    btns[i].disabled = true;
-    var v = Number(btns[i].querySelector('.ans-t').textContent);
-    if(v === correct) btns[i].classList.add(ok ? 'correct' : 'reveal');
+  var elapsed=(performance.now()-ST.qStart)/1000, ok=(val===correct);
+  var btns=el('ans-grid').querySelectorAll('.ans');
+  for(var i=0;i<btns.length;i++){
+    btns[i].disabled=true;
+    if(Number(btns[i].querySelector('.ans-t').textContent)===correct)
+      btns[i].classList.add(ok?'correct':'reveal');
   }
   if(!ok) btn.classList.add('wrong');
-
   ST.total++;
-  var os = ST.opStats[ST.currentOp];
-  os.t += elapsed; os.c++;
+  var os=ST.opStats[ST.currentOp]; os.t+=elapsed; os.c++;
   ST.times.push(elapsed);
-
-  if(ok) {
-    ST.combo = Math.min(5, ST.combo+1);
+  if(ok){
+    ST.combo=Math.min(5,ST.combo+1);
     ST.streak++; ST.correct++;
-    ST.bestStreak = Math.max(ST.bestStreak, ST.streak);
+    ST.bestStreak=Math.max(ST.bestStreak,ST.streak);
     correctFX(btn);
-    floatScore(btn, '+'+scoreForAns(elapsed));
-    if(ST.streak>0 && ST.streak%5===0) streakPop(ST.streak);
+    floatScore(btn,'+'+scoreForAns(elapsed));
+    if(ST.streak>0&&ST.streak%5===0) streakPop(ST.streak);
   } else {
     ST.combo=0; ST.streak=0;
     wrongFX();
-    if(ST.mode==='survival') {
+    if(ST.mode==='survival'){
       ST.lives--; renderLives();
-      if(ST.lives<=0) { setTimeout(endGame, 900); return; }
+      if(ST.lives<=0){setTimeout(endGame,900);return;}
     }
   }
-
-  el('g-streak').textContent  = ST.streak;
-  el('g-correct').textContent = ST.correct;
+  el('g-streak').textContent=ST.streak; el('g-correct').textContent=ST.correct;
   updateCombo();
-  setTimeout(nextQ, ok ? 500 : 850);
+  setTimeout(nextQ,ok?500:850);
 }
 
 function scoreForAns(t) {
-  var speed = Math.max(0,(3-t)/3);
-  var combo = ST.combo>=5 ? 2 : ST.combo>=3 ? 1.5 : 1;
-  return Math.round(10 * combo * (1+speed));
+  var speed=Math.max(0,(3-t)/3), combo=ST.combo>=5?2:ST.combo>=3?1.5:1;
+  return Math.round(10*combo*(1+speed));
 }
 
-// FX
 function correctFX(btn) {
   var f=el('flash'); f.className=''; void f.offsetWidth; f.className='c';
   spawnParticles(btn,'#00ff87');
-  try{if(navigator.vibrate) navigator.vibrate([15,10,15]);}catch(e){}
+  try{if(navigator.vibrate)navigator.vibrate([15,10,15]);}catch(e){}
 }
 function wrongFX() {
   var f=el('flash'); f.className=''; void f.offsetWidth; f.className='w';
-  try{if(navigator.vibrate) navigator.vibrate(90);}catch(e){}
+  try{if(navigator.vibrate)navigator.vibrate(90);}catch(e){}
 }
 
-function spawnParticles(ref, color) {
-  var r = ref.getBoundingClientRect();
-  var cx = r.left+r.width/2, cy = r.top+r.height/2;
-  var p = el('particles');
-  for(var i=0;i<12;i++) {
-    var d = document.createElement('div');
-    d.className = 'pfly';
-    var angle = (Math.PI*2*i/12) + Math.random()*.5;
-    var dist = 50 + Math.random()*65;
-    var sz = 4 + Math.random()*5;
-    d.style.cssText = 'left:'+cx+'px;top:'+cy+'px;width:'+sz+'px;height:'+sz+'px;'
+function spawnParticles(ref,color) {
+  var r=ref.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+  var p=el('particles');
+  for(var i=0;i<12;i++){
+    var d=document.createElement('div');
+    d.className='pfly';
+    var angle=(Math.PI*2*i/12)+Math.random()*.5, dist=50+Math.random()*65, sz=4+Math.random()*5;
+    d.style.cssText='left:'+cx+'px;top:'+cy+'px;width:'+sz+'px;height:'+sz+'px;'
       +'background:'+color+';box-shadow:0 0 6px '+color+';'
       +'--dx:'+(Math.cos(angle)*dist)+'px;--dy:'+(Math.sin(angle)*dist)+'px;';
     p.appendChild(d);
-    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 700);
+    setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},700);
   }
 }
 
-function floatScore(ref, txt) {
-  var r = ref.getBoundingClientRect();
-  var div = document.createElement('div');
-  div.className = 'sfloat';
-  div.textContent = txt;
-  div.style.left = (r.left+r.width/2-20)+'px';
-  div.style.top  = r.top+'px';
+function floatScore(ref,txt) {
+  var r=ref.getBoundingClientRect();
+  var div=document.createElement('div');
+  div.className='sfloat'; div.textContent=txt;
+  div.style.left=(r.left+r.width/2-20)+'px'; div.style.top=r.top+'px';
   document.body.appendChild(div);
-  setTimeout(function(){ if(div.parentNode) div.parentNode.removeChild(div); }, 660);
+  setTimeout(function(){if(div.parentNode)div.parentNode.removeChild(div);},660);
 }
 
 function streakPop(n) {
-  var msgs = {5:'🔥 5 STREAK!',10:'💥 10 STREAK!',15:'⚡ 15 STREAK!',20:'🌟 20 STREAK!',25:'👑 25 STREAK!'};
-  var div = document.createElement('div');
-  div.className = 'spop';
-  div.textContent = msgs[n] || ('🔥 '+n+' STREAK!');
+  var msgs={5:'🔥 5 STREAK!',10:'💥 10 STREAK!',15:'⚡ 15 STREAK!',20:'🌟 20 STREAK!',25:'👑 25 STREAK!'};
+  var div=document.createElement('div');
+  div.className='spop'; div.textContent=msgs[n]||('🔥 '+n+' STREAK!');
   document.body.appendChild(div);
-  setTimeout(function(){ if(div.parentNode) div.parentNode.removeChild(div); }, 750);
+  setTimeout(function(){if(div.parentNode)div.parentNode.removeChild(div);},750);
 }
 
 function updateCombo() {
-  var dots = el('cdots').querySelectorAll('.cd');
-  for(var i=0;i<dots.length;i++) dots[i].classList.toggle('on', i < ST.combo);
-  var cb = el('cbonus');
-  if(ST.combo>=5)      { cb.textContent='×2 🔥'; cb.classList.add('show'); }
-  else if(ST.combo>=3) { cb.textContent='×1.5'; cb.classList.add('show'); }
-  else                 { cb.classList.remove('show'); }
+  var dots=el('cdots').querySelectorAll('.cd');
+  for(var i=0;i<dots.length;i++) dots[i].classList.toggle('on',i<ST.combo);
+  var cb=el('cbonus');
+  if(ST.combo>=5){cb.textContent='×2 🔥';cb.classList.add('show');}
+  else if(ST.combo>=3){cb.textContent='×1.5';cb.classList.add('show');}
+  else{cb.classList.remove('show');}
 }
 
-// END GAME
-el('quit-btn').addEventListener('click', function(){ clearInterval(ST.timer); endGame(); });
+el('quit-btn').addEventListener('click',function(){clearInterval(ST.timer);endGame();});
 
 function endGame() {
   clearInterval(ST.timer);
-  if(ST.mode==='survival' && ST.lives>0) ST.survived=true;
+  if(ST.mode==='survival'&&ST.lives>0) ST.survived=true;
   showResult();
 }
 
-// RESULT
 function showResult() {
-  var wasRecord = ST.bestStreak > G.bestStreak;
-  G.bestStreak  = Math.max(G.bestStreak, ST.bestStreak);
-  G.totalSolved += ST.correct;
+  var wasRecord=ST.bestStreak>G.bestStreak;
+  G.bestStreak=Math.max(G.bestStreak,ST.bestStreak);
+  G.totalSolved+=ST.correct;
+  var xpEarned=calcXP(ST);
+  G.xp+=xpEarned;
+  if(ST.isDaily){G.dailyDone=new Date().toDateString();S.set('dailyDone',G.dailyDone);}
+  S.set('bestStreak',G.bestStreak); S.set('totalSolved',G.totalSolved); S.set('xp',G.xp);
 
-  var xpEarned = calcXP(ST);
-  G.xp += xpEarned;
-
-  if(ST.isDaily) {
-    G.dailyDone = new Date().toDateString();
-    S.set('dailyDone', G.dailyDone);
+  var newAch=[];
+  var chk={correct:ST.correct,total:ST.total,bestStreak:ST.bestStreak,times:ST.times,
+    mode:ST.mode,survived:ST.survived,opStats:ST.opStats,globalCorrect:G.totalSolved};
+  for(var i=0;i<ACHIEVEMENTS.length;i++){
+    var a=ACHIEVEMENTS[i];
+    if(G.achievements.indexOf(a.id)===-1&&a.check(chk)){G.achievements.push(a.id);newAch.push(a);}
   }
+  S.set('achievements',G.achievements);
 
-  S.set('bestStreak',  G.bestStreak);
-  S.set('totalSolved', G.totalSolved);
-  S.set('xp',          G.xp);
+  var pct=ST.total?ST.correct/ST.total:0;
+  var trophy='💀',title='TRY AGAIN',grade='F';
+  if(pct>=.97){trophy='👑';title='LEGENDARY!';grade='S+';}
+  else if(pct>=.9){trophy='🏆';title='CHAMPION!';grade='S';}
+  else if(pct>=.8){trophy='🌟';title='EXCELLENT!';grade='A';}
+  else if(pct>=.7){trophy='👍';title='GREAT RUN!';grade='B';}
+  else if(pct>=.5){trophy='✌️';title='GOOD EFFORT';grade='C';}
+  if(ST.mode==='survival'&&ST.survived){trophy='🛡️';title='SURVIVED!';grade='S';}
 
-  // Achievements
-  var newAch = [];
-  var chk = {
-    correct:ST.correct, total:ST.total, bestStreak:ST.bestStreak,
-    times:ST.times, mode:ST.mode, survived:ST.survived,
-    opStats:ST.opStats, globalCorrect:G.totalSolved
-  };
-  for(var i=0;i<ACHIEVEMENTS.length;i++) {
-    var a = ACHIEVEMENTS[i];
-    if(G.achievements.indexOf(a.id)===-1 && a.check(chk)) {
-      G.achievements.push(a.id); newAch.push(a);
-    }
-  }
-  S.set('achievements', G.achievements);
-
-  // Grade
-  var pct = ST.total ? ST.correct/ST.total : 0;
-  var trophy='💀', title='TRY AGAIN', grade='F';
-  if(pct>=.97)      { trophy='👑'; title='LEGENDARY!'; grade='S+'; }
-  else if(pct>=.9)  { trophy='🏆'; title='CHAMPION!';  grade='S';  }
-  else if(pct>=.8)  { trophy='🌟'; title='EXCELLENT!'; grade='A';  }
-  else if(pct>=.7)  { trophy='👍'; title='GREAT RUN!'; grade='B';  }
-  else if(pct>=.5)  { trophy='✌️'; title='GOOD EFFORT';grade='C';  }
-  if(ST.mode==='survival'&&ST.survived) { trophy='🛡️'; title='SURVIVED!'; grade='S'; }
-
-  el('r-trophy').textContent = trophy;
-  el('r-title').textContent  = title;
-  el('r-grade').textContent  = grade;
-  el('r-record').classList.toggle('show', wasRecord);
-  el('r-streak').textContent  = ST.bestStreak;
-  el('r-correct').textContent = ST.correct;
-  el('r-acc').textContent     = ST.total ? Math.round(pct*100)+'%' : '0%';
+  el('r-trophy').textContent=trophy; el('r-title').textContent=title; el('r-grade').textContent=grade;
+  el('r-record').classList.toggle('show',wasRecord);
+  el('r-streak').textContent=ST.bestStreak; el('r-correct').textContent=ST.correct;
+  el('r-acc').textContent=ST.total?Math.round(pct*100)+'%':'0%';
   var sum=0; for(var i=0;i<ST.times.length;i++) sum+=ST.times[i];
-  el('r-speed').textContent   = ST.times.length ? (sum/ST.times.length).toFixed(1)+'s' : '—';
+  el('r-speed').textContent=ST.times.length?(sum/ST.times.length).toFixed(1)+'s':'—';
 
-  // XP
-  var xpP = xpProgress(G.xp);
-  var ti   = xpTierIdx(G.xp);
-  el('xp-lvl-lbl').textContent = 'Level '+(ti+1)+' '+xpTitle(G.xp);
-  el('xp-nxt').textContent     = xpP.label;
-  el('xp-earned').textContent  = '+'+xpEarned+' XP earned'+(ST.isDaily?' (daily bonus)':'');
-  setTimeout(function(){ el('xp-fill').style.width = xpP.pct+'%'; }, 150);
+  var xpP=xpProgress(G.xp), ti=xpTierIdx(G.xp);
+  el('xp-lvl-lbl').textContent='Level '+(ti+1)+' '+xpTitle(G.xp);
+  el('xp-nxt').textContent=xpP.label;
+  el('xp-earned').textContent='+'+xpEarned+' XP earned'+(ST.isDaily?' (daily bonus)':'');
+  setTimeout(function(){el('xp-fill').style.width=xpP.pct+'%';},150);
 
-  // Achievements
-  var ar = el('ach-row');
-  ar.style.display = newAch.length ? 'flex' : 'none';
-  var achHTML = '';
-  for(var i=0;i<newAch.length;i++) {
-    achHTML += '<div class="ach" style="animation-delay:'+(i*.1)+'s">'
-      +'<span class="ach-icon">'+newAch[i].icon+'</span>'+newAch[i].name+'</div>';
-  }
-  ar.innerHTML = achHTML;
+  var ar=el('ach-row');
+  ar.style.display=newAch.length?'flex':'none';
+  var achHTML='';
+  for(var i=0;i<newAch.length;i++)
+    achHTML+='<div class="ach" style="animation-delay:'+(i*.1)+'s"><span class="ach-icon">'+newAch[i].icon+'</span>'+newAch[i].name+'</div>';
+  ar.innerHTML=achHTML;
 
-  // Breakdown
-  var activeOps = [];
-  var opKeys = ['add','sub','mul','div','mod'];
-  for(var i=0;i<opKeys.length;i++) {
-    if(ST.ops.indexOf(opKeys[i])>-1 && ST.opStats[opKeys[i]].c>0) activeOps.push(opKeys[i]);
-  }
-  var maxC = 1;
-  for(var i=0;i<activeOps.length;i++) if(ST.opStats[activeOps[i]].c > maxC) maxC=ST.opStats[activeOps[i]].c;
-
-  var bdHTML = '';
-  if(activeOps.length) {
-    for(var i=0;i<activeOps.length;i++) {
-      var op  = activeOps[i];
-      var s   = ST.opStats[op];
-      var pBar = Math.round((s.c/maxC)*100);
-      bdHTML += '<div class="bdrow">'
-        +'<span class="bdicon">'+OP_EMOJI[op]+'</span>'
+  var activeOps=[],opKeys=['add','sub','mul','div','mod'];
+  for(var i=0;i<opKeys.length;i++)
+    if(ST.ops.indexOf(opKeys[i])>-1&&ST.opStats[opKeys[i]].c>0) activeOps.push(opKeys[i]);
+  var maxC=1;
+  for(var i=0;i<activeOps.length;i++) if(ST.opStats[activeOps[i]].c>maxC) maxC=ST.opStats[activeOps[i]].c;
+  var bdHTML='';
+  if(activeOps.length){
+    for(var i=0;i<activeOps.length;i++){
+      var op=activeOps[i],s=ST.opStats[op],pBar=Math.round((s.c/maxC)*100);
+      bdHTML+='<div class="bdrow"><span class="bdicon">'+OP_EMOJI[op]+'</span>'
         +'<span class="bdlbl">'+OP_LABEL[op]+'</span>'
         +'<div class="bdtrack"><div class="bdfill" style="width:'+pBar+'%"></div></div>'
-        +'<span class="bdacc">'+s.c+'✓</span>'
-        +'</div>';
+        +'<span class="bdacc">'+s.c+'✓</span></div>';
     }
   } else {
-    bdHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:8px 0">No data yet</div>';
+    bdHTML='<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:8px 0">No data yet</div>';
   }
-  el('bd-rows').innerHTML = bdHTML;
+  el('bd-rows').innerHTML=bdHTML;
 
-  // LB update
-  for(var i=0;i<G.lb.length;i++) {
-    if(G.lb[i].isYou) G.lb[i].score = Math.max(G.lb[i].score||0, G.bestStreak*100+G.totalSolved);
-  }
-  S.set('lb', G.lb);
+  for(var i=0;i<G.lb.length;i++)
+    if(G.lb[i].isYou) G.lb[i].score=Math.max(G.lb[i].score||0,G.bestStreak*100+G.totalSolved);
+  S.set('lb',G.lb);
 
   showScreen('result');
 }
 
-// SHARE
-el('r-share').addEventListener('click', function(){
-  var txt = '🧮 Math Saga — '+ST.correct+'/'+ST.total+' correct · '+ST.bestStreak+' streak! #MathSaga';
-  if(navigator.share) {
-    navigator.share({title:'Math Saga', text:txt, url:location.href}).catch(function(){});
-  } else if(navigator.clipboard) {
+el('r-share').addEventListener('click',function(){
+  var txt='🧮 Math Saga — '+ST.correct+'/'+ST.total+' correct · '+ST.bestStreak+' streak! #MathSaga';
+  if(navigator.share){navigator.share({title:'Math Saga',text:txt,url:location.href}).catch(function(){});}
+  else if(navigator.clipboard){
     navigator.clipboard.writeText(txt).then(function(){
-      el('r-share').textContent = '✓ Copied to clipboard!';
-      setTimeout(function(){ el('r-share').innerHTML='📤&nbsp; SHARE MY SCORE'; }, 2200);
+      el('r-share').textContent='✓ Copied to clipboard!';
+      setTimeout(function(){el('r-share').innerHTML='📤&nbsp; SHARE MY SCORE';},2200);
     });
   }
 });
 
-// BUTTON WIRING
-el('play-btn').addEventListener('click',  function(){ if(ST.ops.length) startGame(); });
-el('daily-btn').addEventListener('click', function(){ ST.isDaily=true; startGame(); });
-el('r-again').addEventListener('click',   function(){ ST.isDaily=false; startGame(); });
-el('r-home').addEventListener('click',    function(){ ST.isDaily=false; showScreen('home'); initHome(); });
+el('play-btn').addEventListener('click',  function(){if(ST.ops.length)startGame();});
+el('daily-btn').addEventListener('click', function(){ST.isDaily=true;startGame();});
+el('r-again').addEventListener('click',   function(){ST.isDaily=false;startGame();});
+el('r-home').addEventListener('click',    function(){ST.isDaily=false;showScreen('home');initHome();});
 </script>
 
 <script>
